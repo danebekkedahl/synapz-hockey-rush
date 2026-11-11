@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#060b16" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Hockey Rush" />
+  <title>Synapz Hockey Rush — 35° Broadcast Ice Vision</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app-shell" class="app-shell">
+    <!-- 35-Degree Elevated Broadcast Ice Canvas -->
+    <canvas id="ice-canvas" aria-label="Synapz Hockey Rush 35-Degree Ice Rink"></canvas>
+
+    <!-- Top Broadcast Scorebug & Telemetry HUD (Active Gameplay) -->
+    <header id="hud-top" class="hud-top hidden" aria-live="polite">
+      <div class="scorebug-row scorebug-primary">
+        <div class="arena-pill" id="hud-arena-name" title="Current Arena">L1 • Twilight Pond</div>
+        <div class="stat-pill pass-pill" id="hud-passes" data-armed="false">PASSES: 0/3</div>
+        <div class="stat-pill goal-pill" id="hud-goals">GOALS: 0/3</div>
+      </div>
+      <div class="scorebug-row scorebug-secondary">
+        <div class="quiver-pill" id="hud-pucks" title="3-Puck Shift Quiver">
+          <span class="quiver-label">PUCKS</span>
+          <span class="quiver-dots" id="hud-puck-dots">●●●</span>
+        </div>
+        <div class="sp-pill" id="hud-sp">⭐ <span id="hud-sp-val">0</span> SP</div>
+        <div class="chrome-links">
+          <a href="#hub" id="hud-open-hub" class="chrome-chip" title="Open Locker Hub">🚪 Hub</a>
+          <a href="report.html" id="hud-open-board" class="chrome-chip" title="Founder Phone Board">📱 Board</a>
+          <a href="#redflag" id="hud-open-redflag" class="chrome-chip flag-chip" title="Seat 0 Red-Flag Note">🚩</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- On-Ice Center Broadcast Callout & 3-2-1 Countdown -->
+    <div id="ice-callout" class="ice-callout hidden" aria-live="assertive">
+      <div id="callout-badge" class="callout-badge">ONE-TIMER ARMED!</div>
+      <div id="callout-sub" class="callout-sub">Glowing top corners unlocked — tap Shoot!</div>
+    </div>
+
+    <div id="countdown-overlay" class="countdown-overlay hidden" aria-live="assertive">
+      <div id="countdown-number" class="countdown-number">3</div>
+      <div id="countdown-label" class="countdown-label">NEXT RUSH INCOMING</div>
+    </div>
+
+    <!-- 3-Stage Word-Streaming Peer Guide Speech Bubble (~25% Quadrant -> Bottom-Left Replay Circle) -->
+    <aside id="speech-bubble" class="speech-bubble hidden" role="status" aria-live="polite">
+      <div class="speech-header">
+        <span id="speech-avatar" class="speech-avatar">🧒</span>
+        <span id="speech-speaker" class="speech-speaker">Leo • Pond Winger</span>
+        <span id="speech-dismiss" class="speech-dismiss" role="link" tabindex="0" title="Minimize to Replay Circle">✕</span>
+      </div>
+      <p id="speech-text" class="speech-text"></p>
+    </aside>
+
+    <div id="speech-replay-orb" class="speech-replay-orb hidden" role="link" tabindex="0" title="Replay Peer Guide Tip">
+      <span id="replay-orb-avatar" class="replay-orb-avatar">🧒</span>
+      <span class="replay-orb-sound">🔊</span>
+    </div>
+
+    <!-- STRICT <= 4 THUMB-ZONE GAMEPLAY ACTION CONTROLS -->
+    <nav id="thumb-controls" class="thumb-controls hidden" aria-label="Gameplay Controls">
+      <button type="button" id="btn-left" class="ctrl-btn ctrl-move" aria-label="Skate Left Lane">
+        <span class="ctrl-icon">⬅️</span>
+        <span class="ctrl-label">Left</span>
+      </button>
+      <button type="button" id="btn-right" class="ctrl-btn ctrl-move" aria-label="Skate Right Lane">
+        <span class="ctrl-icon">➡️</span>
+        <span class="ctrl-label">Right</span>
+      </button>
+      <button type="button" id="btn-pass" class="ctrl-btn ctrl-pass" aria-label="Pass to Lead Ring">
+        <span class="ctrl-icon">🏒</span>
+        <span class="ctrl-label">Pass</span>
+      </button>
+      <button type="button" id="btn-shoot" class="ctrl-btn ctrl-shoot" disabled aria-label="Shoot One-Timer">
+        <span class="ctrl-icon">🎯</span>
+        <span class="ctrl-label">Shoot</span>
+      </button>
+    </nav>
+
+    <!-- 2-BUTTON ENTRY GATE -->
+    <section id="entry-gate" class="overlay-screen entry-gate">
+      <div class="entry-card">
+        <div class="entry-crest-row">
+          <span class="entry-badge">v10.9.4 • 35° BROADCAST ICE VISION</span>
+          <a href="#redflag" id="gate-redflag-link" class="gate-flag-link" title="Seat 0 Red-Flag Modal">🚩</a>
+        </div>
+        <h1 class="entry-title">SYNAPZ <span>HOCKEY RUSH</span></h1>
+        <p class="entry-subtitle">
+          Read all 3 lanes up the sheet. Thread 3 tape-to-tape passes into glowing Lead Rings to arm the top-shelf One-Timer.
+        </p>
+
+        <div class="entry-legend">
+          <span class="legend-chip emerald"><i class="ring-dot emerald"></i> Open Lead</span>
+          <span class="legend-chip amber"><i class="ring-dot amber"></i> Tight Seam</span>
+          <span class="legend-chip crimson"><i class="ring-dot crimson"></i> Stick Blocked</span>
+        </div>
+
+        <div class="entry-actions">
+          <button type="button" id="btn-drop-puck" class="gate-btn gate-btn-primary">🏒 DROP THE PUCK</button>
+          <button type="button" id="btn-locker-hub" class="gate-btn gate-btn-secondary">🚪 LOCKER HUB</button>
+        </div>
+
+        <div class="entry-footer-links">
+          <a href="report.html" class="board-nav-link">📱 Open 3-Tab Founder Phone Board →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 ILLUSTRATED POINT-AND-CLICK LOCKER HUB ROOMS -->
+    <section id="locker-hub" class="overlay-screen locker-hub hidden" aria-label="Locker Hub">
+      <div class="hub-container">
+        <div class="hub-topbar">
+          <div class="hub-brand">
+            <span class="hub-title">🏟️ RUSH LOCKER HUB</span>
+            <span class="hub-sp-badge">⭐ <strong id="hub-sp-count">0</strong> SP</span>
+          </div>
+          <div class="hub-top-actions">
+            <a href="#redflag" id="hub-redflag-link" class="hub-flag-chip" title="Seat 0 Red-Flag">🚩</a>
+            <button type="button" id="btn-hub-play" class="hub-play-btn">🏒 DROP PUCK</button>
+          </div>
+        </div>
+
+        <!-- 5 Room Navigation Tabs -->
+        <div class="hub-room-tabs" role="tablist" aria-label="Hub Rooms">
+          <button type="button" class="room-tab active" data-room="tunnel" role="tab" aria-selected="true">🚪 Tunnel</button>
+          <button type="button" class="room-tab" data-room="stall" role="tab" aria-selected="false">🎽 Stall</button>
+          <button type="button" class="room-tab" data-room="chalkboard" role="tab" aria-selected="false">📋 Map</button>
+          <button type="button" class="room-tab" data-room="proshop" role="tab" aria-selected="false">🛠️ Shop</button>
+          <button type="button" class="room-tab" data-room="trophy" role="tab" aria-selected="false">🏆 Cups</button>
+        </div>
+
+        <!-- Illustrated Interactive Scene Stage -->
+        <div id="hub-room-stage" class="hub-room-stage"></div>
+
+        <div class="hub-footer">
+          <button type="button" id="btn-hub-back-gate" class="hub-sub-btn">← Entry Gate</button>
+          <a href="report.html" class="hub-board-link">📱 Founder Phone Board</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHIFT COMPLETE / OUT OF PUCKS MODAL -->
+    <section id="shift-modal" class="overlay-screen modal-backdrop hidden" aria-label="Shift Summary">
+      <div class="modal-card">
+        <div class="modal-kicker">SHIFT WHISTLE • 0 PUCKS LEFT</div>
+        <h2 class="modal-title" id="shift-modal-title">Shift Complete</h2>
+        <p class="modal-desc" id="shift-modal-desc">Keep your head up and scan for Emerald Lead Rings ahead of defender sticks.</p>
+        <div class="shift-stats-grid">
+          <div class="shift-stat"><span>Arena</span><strong id="sum-arena">Level 1</strong></div>
+          <div class="shift-stat"><span>Goals</span><strong id="sum-goals">0 / 3</strong></div>
+          <div class="shift-stat"><span>Tape Passes</span><strong id="sum-passes">0</strong></div>
+          <div class="shift-stat"><span>Story Points</span><strong id="sum-sp">0 SP</strong></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btn-retry-shift" class="gate-btn gate-btn-primary">🏒 NEW 3-PUCK SHIFT</button>
+          <button type="button" id="btn-shift-to-hub" class="gate-btn gate-btn-secondary">🚪 UPGRADE IN LOCKER</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEAT 0 CO-FOUNDER RED-FLAG MODAL -->
+    <section id="redflag-modal" class="overlay-screen modal-backdrop hidden" aria-label="Seat 0 Red-Flag">
+      <div class="modal-card">
+        <div class="modal-kicker">🚩 SEAT 0 CO-FOUNDER OVERRIDE</div>
+        <h2 class="modal-title">Log Playtest Red-Flag</h2>
+        <p class="modal-desc">
+          Co-Founders: Dane (<code>danebekkedahl@gmail.com</code>) &amp; Evan (<code>evanbekk@gmail.com</code>). Saved locally under <code>synapz_rush_red_flags</code>.
+        </p>
+        <div id="redflag-context" class="redflag-context"></div>
+        <label for="redflag-input" class="sr-only">Playtest Note</label>
+        <textarea id="redflag-input" class="redflag-textarea" rows="3" placeholder="What felt off on the ice, camera whip-pan, or lead rings?"></textarea>
+        <div id="redflag-status" class="redflag-status"></div>
+        <div class="modal-actions">
+          <button type="button" id="btn-save-redflag" class="gate-btn gate-btn-primary">💾 Save Red-Flag Note</button>
+          <button type="button" id="btn-close-redflag" class="gate-btn gate-btn-secondary">Close</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

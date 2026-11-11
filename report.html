@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#060c18" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Hockey Rush" />
+  <title>Synapz Hockey Rush — 3-Tab Founder Phone Board</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+  <style>
+    :root {
+      --bg: #060c18;
+      --surface: #0f1b31;
+      --surface-2: #162544;
+      --border: rgba(125, 211, 252, 0.24);
+      --cyan: #38bdf8;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --crimson: #ef4444;
+      --gold: #facc15;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    button, a {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    .board-wrap {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding-bottom: 36px;
+      overflow-x: hidden;
+    }
+
+    /* Compact Header */
+    .phone-header {
+      padding: 10px 12px 8px;
+      background: linear-gradient(180deg, #0b162c, #070e1d);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: #f8fafc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand-title span {
+      color: var(--cyan);
+    }
+
+    .play-link {
+      text-decoration: none;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      color: #a7f3d0;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .telemetry-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .taste-pill {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.34);
+      color: #bae6fd;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    /* 3 STICKY TOP PHONE TABS */
+    .sticky-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      padding: 8px 10px;
+      background: rgba(6, 12, 24, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.26);
+    }
+
+    .tab-btn {
+      appearance: none;
+      background: var(--surface);
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      border-radius: 11px;
+      color: var(--muted);
+      padding: 9px 4px;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.14s ease;
+    }
+
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--cyan);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.22);
+    }
+
+    /* Toast Banner */
+    .toast-bar {
+      margin: 8px 10px 0;
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #d1fae5;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .toast-bar.visible {
+      display: block;
+    }
+
+    .toast-bar.warn {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(251, 191, 36, 0.5);
+      color: #fef3c7;
+    }
+
+    /* Card Feed */
+    .cards-container {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .deploy-box {
+      background: linear-gradient(180deg, rgba(15, 27, 49, 0.98), rgba(9, 18, 34, 0.98));
+      border: 1.5px solid rgba(52, 211, 153, 0.42);
+      border-radius: 14px;
+      padding: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .deploy-meta {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      line-height: 1.38;
+    }
+
+    .deploy-cta {
+      appearance: none;
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      border: 1.5px solid #a7f3d0;
+      background: linear-gradient(135deg, #0284c7, #10b981);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      padding: 8px 10px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.32);
+    }
+
+    .deploy-cta:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: #1e293b;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    .upgrade-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .upgrade-card.consensus {
+      border-color: rgba(250, 204, 21, 0.52);
+      background: linear-gradient(180deg, rgba(25, 35, 62, 0.96), rgba(15, 27, 49, 0.98));
+    }
+
+    .card-badges {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-num {
+      background: rgba(148, 163, 184, 0.16);
+      color: #cbd5e1;
+    }
+
+    .badge-consensus {
+      background: rgba(250, 204, 21, 0.2);
+      border: 1px solid rgba(250, 204, 21, 0.55);
+      color: #fde047;
+    }
+
+    .badge-cat {
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+    }
+
+    .badge-decision {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+    }
+    .badge-decision.skip {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+    .badge-decision.reject {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 14.5px;
+      font-weight: 900;
+      line-height: 1.28;
+      color: #f8fafc;
+    }
+
+    .card-summary {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.42;
+      color: #cbd5e1;
+    }
+
+    .explain-drawer {
+      display: none;
+      background: rgba(6, 12, 24, 0.78);
+      border: 1px solid rgba(56, 189, 248, 0.34);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 11.5px;
+      line-height: 1.42;
+      color: #bae6fd;
+    }
+
+    .explain-drawer.open {
+      display: block;
+    }
+
+    /* 2x2 TACTILE DECISION GRID */
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .dec-btn,
+    .single-action-btn {
+      appearance: none;
+      min-height: 42px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: var(--surface-2);
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 6px 6px;
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.14s ease;
+    }
+
+    .dec-btn:active,
+    .single-action-btn:active {
+      transform: scale(0.97);
+    }
+
+    .dec-approve {
+      background: rgba(6, 95, 70, 0.65);
+      border-color: rgba(52, 211, 153, 0.55);
+      color: #ecfdf5;
+    }
+
+    .dec-skip {
+      background: rgba(120, 53, 15, 0.5);
+      border-color: rgba(251, 191, 36, 0.45);
+      color: #fef3c7;
+    }
+
+    .dec-explain {
+      background: rgba(12, 74, 110, 0.55);
+      border-color: rgba(56, 189, 248, 0.48);
+      color: #e0f2fe;
+    }
+
+    .dec-reject {
+      background: rgba(127, 29, 29, 0.55);
+      border-color: rgba(248, 113, 113, 0.48);
+      color: #fee2e2;
+    }
+
+    .single-action-btn {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(125, 211, 252, 0.4);
+    }
+
+    .empty-box {
+      background: rgba(15, 27, 49, 0.65);
+      border: 1px dashed rgba(148, 163, 184, 0.34);
+      border-radius: 14px;
+      padding: 24px 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="board-wrap">
+    <header class="phone-header">
+      <div class="header-top">
+        <div class="brand-title">🏒 SYNAPZ RUSH <span>PHONE BOARD</span></div>
+        <a href="index.html" class="play-link">🏒 Play Rush</a>
+      </div>
+      <div class="telemetry-strip">
+        <span>Inbox Zero + Top-Up (v10.9.4)</span>
+        <span class="taste-pill" id="taste-readout">Taste Score: 0</span>
+        <span id="pool-readout">Pool: 48 unseen</span>
+      </div>
+    </header>
+
+    <!-- 3 STICKY TOP PHONE TABS -->
+    <nav class="sticky-tabs" role="tablist" aria-label="Founder Review Tabs">
+      <button type="button" id="tab-review" class="tab-btn active" data-tab="review" role="tab" aria-selected="true">
+        📥 To Review (12)
+      </button>
+      <button type="button" id="tab-queued" class="tab-btn" data-tab="queued" role="tab" aria-selected="false">
+        🛠️ Queued (0)
+      </button>
+      <button type="button" id="tab-live" class="tab-btn" data-tab="live" role="tab" aria-selected="false">
+        ✅ Live in App (0)
+      </button>
+    </nav>
+
+    <div id="toast-bar" class="toast-bar" role="status" aria-live="polite"></div>
+
+    <main id="cards-container" class="cards-container"></main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEYS = {
+        REPORT_STATE: 'synapz_rush_report_state',
+        TASTE: 'synapz_rush_taste',
+        LIVE_UPGRADES: 'synapz_rush_live_upgrades'
+      };
+
+      const INBOX_CAP = 12;
+
+      /* ======================================================================
+         60 PRE-CODED SYNAPZ HOCKEY RUSH UPGRADES (BATCHES A, B, C, D, E)
+         #1-#5 Badged 🏆 TOP 5 CONSENSUS, #6-#12 Batch A Standard, #13-#60 B-E
+         ====================================================================== */
+      const ALL_60_UPGRADES = [
+        // BATCH A (#1 - #12)
+        { id: 'R01', num: 1, batch: 'A', top5: true, cat: '35° Broadcast Camera', title: 'Dynamic High-Slot Horizon Zoom on Pass #3', summary: 'Subtly widens the 35° camera sightline by 8% when ONE-TIMER ARMED triggers so oncoming goal corners pop.', explain: 'Seats 1 & 2 Consensus: Widening down-ice sightlines right as Pass #3 lands gives players an extra 0.35s to read the goalie butterfly and pick top shelf.' },
+        { id: 'R02', num: 2, batch: 'A', top5: true, cat: 'Pass Chain & Ice Vision', title: 'Dual-Ring Chevron Pulse on Emerald Windows', summary: 'Adds forward-rotating directional chevrons inside open Emerald Lead Rings so players spot clean seams faster.', explain: 'Seats 2 & 9 Consensus: Motion + shape redundancy ensures players distinguish Emerald open windows from Amber tight seams in peripheral vision.' },
+        { id: 'R03', num: 3, batch: 'A', top5: true, cat: 'Ice Graphics & Lighting', title: 'Anisotropic Zamboni Wet-Sheen Lane Strips', summary: 'Renders fresh centerline Zamboni gloss bands that reflect overhead arena lights with realistic ice depth.', explain: 'Seats 1 & 8 Consensus: Longitudinal gloss strips reinforce the 3 skating lanes naturally without cluttering the ice with artificial UI lines.' },
+        { id: 'R04', num: 4, batch: 'A', top5: true, cat: 'Skater Animation & Juice', title: 'Crossover Heel-Kick Frame on Sharp Lane Cuts', summary: 'Adds an authentic outside-edge crossover knee tuck and twin snow plume when cutting lanes at full speed.', explain: 'Seats 4 & 2 Consensus: Makes lateral dodges feel genuinely like hockey edgework instead of a generic runner sidestep.' },
+        { id: 'R05', num: 5, batch: 'A', top5: true, cat: '35° Broadcast Camera', title: 'Velocity-Matched Whip-Pan Puck Comet Ribbon', summary: 'Draws a tapered cyan-emerald ribbon along the puck vector during camera whip-pan transfers.', explain: 'Seats 1 & 4 Consensus: Anchors the eye during fast cross-ice transfers so players never lose track of which winger just caught the pass.' },
+        { id: 'R06', num: 6, batch: 'A', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Defender Poke-Check Sweep Arc Preview', summary: 'Projects a faint frost arc at the tip of active defender sticks so Crimson block zones feel 100% fair.', explain: 'Seat 2 Advisory: Teaches young players real hockey stick-on-puck spacing and rewards cutting laterally before passing.' },
+        { id: 'R07', num: 7, batch: 'A', top5: false, cat: 'Ice Graphics & Lighting', title: 'Goal-Lamp Red Ice Wash on Top-Shelf Snipes', summary: 'Floods the crease ice with a warm crimson strobe reflection for 1.5s whenever the goal horn blasts.', explain: 'Seat 4 Advisory: Amplifies goal celebration dopamine while the 3-2-1 countdown prepares the next rush.' },
+        { id: 'R08', num: 8, batch: 'A', top5: false, cat: 'Arena Atmospheres', title: 'Twilight Pond Chimney Smoke & Firefly Glow', summary: 'Adds cozy cabin silhouettes and warm string-light sway on Level 1 Backyard Twilight Pond.', explain: 'Seat 10 Advisory: Gives Level 1 a welcoming backyard pond vibe before transitioning to high-intensity stadium levels.' },
+        { id: 'R09', num: 9, batch: 'A', top5: false, cat: 'Skater Animation & Juice', title: 'Stick-Flex Bowing Frame on Armed One-Timers', summary: 'Bends the carrier composite stick shaft into a loaded C-curve right before launching the armed shot.', explain: 'Seat 4 Advisory: Sells Shot Power upgrades visually right on the skater sprite.' },
+        { id: 'R10', num: 10, batch: 'A', top5: false, cat: 'Locker Hub & Progression', title: 'Live 3D Jersey Mannequin Spin in Pro Shop', summary: 'Lets players preview front crest and back #97 numbers side-by-side when swapping Rush sweaters.', explain: 'Seat 6 Advisory: Makes Pro Shop customization feel tactile and rewarding between shifts.' },
+        { id: 'R11', num: 11, batch: 'A', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Amber Thread-the-Needle Sparkle Callout', summary: 'Triggers a crisp silver spark burst and +5 SP micro-badge when completing a tight Amber pass window.', explain: 'Seats 2 & 6 Advisory: Rewards gutsy pro-level seam passes without punishing safer Emerald plays.' },
+        { id: 'R12', num: 12, batch: 'A', top5: false, cat: 'Arena Atmospheres', title: 'Plexiglass Stanchion Parallax Shimmer', summary: 'Adds high-speed board stanchion reflections along the peripheral edges to heighten skating speed.', explain: 'Seat 1 Advisory: Enhances forward sensation of speed as base ice tempo escalates from Level 1 to Level 5.' },
+
+        // BATCH B (#13 - #24)
+        { id: 'R13', num: 13, batch: 'B', top5: false, cat: 'Ice Graphics & Lighting', title: 'Deep Dual-Edge Skate Carve Grooves on Bank Cuts', summary: 'Thickens outside-blade ice trenches during rapid back-to-back lane cuts.', explain: 'Seat 4: Creates a readable visual history of your rush up the ice.' },
+        { id: 'R14', num: 14, batch: 'B', top5: false, cat: '35° Broadcast Camera', title: 'Micro Impact Zoom on Crossbar Bar-Down Goals', summary: 'Adds a 3% 120ms broadcast punch-in when a one-timer kisses the iron and drops in.', explain: 'Seat 1: Classic NHL broadcast replay punch without jarring the player.' },
+        { id: 'R15', num: 15, batch: 'B', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Audio Pitch Escalation Across Passes 1-2-3', summary: 'Raises tape-slap harmonic resonance with each consecutive pass in the 3-pass chain.', explain: 'Seat 5: Lets players hear pass chain momentum without glancing up at the scorebug.' },
+        { id: 'R16', num: 16, batch: 'B', top5: false, cat: 'Arena Atmospheres', title: 'Skills Combine Laser Gate Split Timers', summary: 'Flashes green split strobes as skaters burst past combine light gates in Level 2.', explain: 'Seat 10: Gives the Skills Combine Barn its own unmistakable training-lab identity.' },
+        { id: 'R17', num: 17, batch: 'B', top5: false, cat: 'Skater Animation & Juice', title: 'Goalie Desperation Glove Windmill on Snipes', summary: 'Animates the butterfly goalie flashing the leather a split-second late as your one-timer rockets past.', explain: 'Seat 4: Makes every 3-pass one-timer feel earned against a reactive tendy.' },
+        { id: 'R18', num: 18, batch: 'B', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Weak-Side Winger Stick-Tap Call for Pass', summary: 'Open Emerald wingers tap their stick blade twice on the ice when wide open up the wing.', explain: 'Seat 2: Authentic hockey audio-visual cue used on every real rink.' },
+        { id: 'R19', num: 19, batch: 'B', top5: false, cat: 'Locker Hub & Progression', title: 'Coach Chalkboard Animated Weave Preview', summary: 'Animates dotted pass arrows on the Locker Hub chalkboard for the currently highlighted arena.', explain: 'Seat 7: Prepares players visually for diagonal cuts and scissor weaves before puck drop.' },
+        { id: 'R20', num: 20, batch: 'B', top5: false, cat: 'Ice Graphics & Lighting', title: 'Sub-Ice Crease Logo Watermark Crispness', summary: 'Renders a subtle Synapz lightning-puck center-ice crest frozen beneath 2 inches of clear ice.', explain: 'Seat 1: Signature Synapz Hockey Rush brand polish at every center-ice crossing.' },
+        { id: 'R21', num: 21, batch: 'B', top5: false, cat: 'Arena Atmospheres', title: 'Winter Classic Breath Vapor Puffs', summary: 'Emits subtle cold-air breath vapor from skaters in Level 1 Pond and Level 4 Winter Classic.', explain: 'Seat 4: Instant outdoor hockey atmosphere at almost zero canvas cost.' },
+        { id: 'R22', num: 22, batch: 'B', top5: false, cat: '35° Broadcast Camera', title: 'Stumble Recovery Horizon Stabilizer', summary: 'Keeps horizon pitch rock-steady during the 1s turnover stumble so mobile players never feel dizzy.', explain: 'Seat 3: Protects thumb-zone comfort while keeping screen-shake crisp.' },
+        { id: 'R23', num: 23, batch: 'B', top5: false, cat: 'Locker Hub & Progression', title: 'Shift Streak Multiplier Badge in Locker Stall', summary: 'Displays consecutive turnover-free goals on the locker stall nameplate.', explain: 'Seat 6: Encourages disciplined Emerald-lane passing streaks.' },
+        { id: 'R24', num: 24, batch: 'B', top5: false, cat: 'Skater Animation & Juice', title: 'Jersey Hem Flutter at High Speed Tiers', summary: 'Adds subtle 2-frame sweater hem ripple once skating speed exceeds Level 4 pace.', explain: 'Seat 4: Conveys elite breakaway speed visually.' },
+
+        // BATCH C (#25 - #36)
+        { id: 'R25', num: 25, batch: 'C', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Colorblind Pattern Strokes on All Lead Rings', summary: 'Pairs Solid (Emerald), Dashed (Amber), and Crossed-X (Crimson) strokes for 100% color-independent clarity.', explain: 'Seat 9: Guarantees universal readability under any lighting condition.' },
+        { id: 'R26', num: 26, batch: 'C', top5: false, cat: 'Arena Atmospheres', title: 'Local Travel Rink Scuffed Yellow Kickplates', summary: 'Adds authentic puck-mark scuffs along the bottom yellow kickplates in Level 3 Travel Rink.', explain: 'Seat 1: Captures the nostalgic look of Saturday morning travel hockey.' },
+        { id: 'R27', num: 27, batch: 'C', top5: false, cat: 'Ice Graphics & Lighting', title: 'Jumbotron Scoreboard Reflection in Level 5', summary: 'Projects a shimmering overhead jumbotron reflection gliding down center ice in Pro Championship Arena.', explain: 'Seat 1: Sells big-league championship scale.' },
+        { id: 'R28', num: 28, batch: 'C', top5: false, cat: 'Skater Animation & Juice', title: 'One-Knee Drop One-Timer Finish Animation', summary: 'Drops the shooter onto one knee Hull/Ovechkin-style when unleashing a fully upgraded Shot Power blast.', explain: 'Seat 4: Iconic hockey silhouette moment on Pass #3 payoff.' },
+        { id: 'R29', num: 29, batch: 'C', top5: false, cat: '35° Broadcast Camera', title: 'Predictive Wing Lead Bias on Diagonal Cuts', summary: 'Nudges camera lateral tracking 4% toward cutting wingers in Levels 3-5 for earlier edge reads.', explain: 'Seat 2: Keeps diagonal slot cuts framed effortlessly on 390px portrait screens.' },
+        { id: 'R30', num: 30, batch: 'C', top5: false, cat: 'Locker Hub & Progression', title: 'Skate Hollow Grind Spark Burst in Pro Shop', summary: 'Fires interactive grinder sparks on the Pro Shop SVG banner whenever a new blade trail is equipped.', explain: 'Seat 6: Point-and-click delight inside the Locker Hub.' },
+        { id: 'R31', num: 31, batch: 'C', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Decoy Shadow Jersey Contrast Boost in Level 5', summary: 'Darkens backchecker sweaters on covered decoys so players read coverage traps cleanly at high speed.', explain: 'Seat 9: Ensures Level 5 decoys test hockey IQ rather than squinting.' },
+        { id: 'R32', num: 32, batch: 'C', top5: false, cat: 'Arena Atmospheres', title: 'Pro Championship Confetti Shimmer on Hat Trick', summary: 'Drops gold rafter sparkles across the upper bowl when scoring Goal 3/3 in Level 5.', explain: 'Seat 4: Makes beating Level 5 feel like lifting the Cup.' },
+        { id: 'R33', num: 33, batch: 'C', top5: false, cat: 'Ice Graphics & Lighting', title: 'Puck Contact Frost Ring on Hard Receptions', summary: 'Stamps a tiny fading frost ring where a high-zip pass meets the receiver tape.', explain: 'Seat 4: Micro-polish that makes tape-to-tape passes feel weighty.' },
+        { id: 'R34', num: 34, batch: 'C', top5: false, cat: 'Locker Hub & Progression', title: 'Peer Guide Locker Room Pep-Talk Tap', summary: 'Tapping your active Peer Guide badge in Tunnel triggers a fresh scouting tip for the selected rink.', explain: 'Seat 7: Deepens Leo, Maya, and Coach Vance personality.' },
+        { id: 'R35', num: 35, batch: 'C', top5: false, cat: 'Skater Animation & Juice', title: 'Tinted Mirror Visor Glint on Helmet Turn', summary: 'Flashes a crisp sky-blue reflection across the carrier visor during whip-pan locks.', explain: 'Seat 1: Sharp pro-style equipment detail.' },
+        { id: 'R36', num: 36, batch: 'C', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Countdown Puck Drop Shadow Landing', summary: 'Drops a visual 3D puck from top of frame onto the carrier stick right as PUCK DROP hits.', explain: 'Seat 10: Connects the 3-2-1 countdown directly to the ice action.' },
+
+        // BATCH D (#37 - #48)
+        { id: 'R37', num: 37, batch: 'D', top5: false, cat: 'Ice Graphics & Lighting', title: 'Fresh Period Ice vs Late-Shift Scuff Progression', summary: 'Gradually accumulates subtle skate-scuff texture as your shift extends past multiple goals.', explain: 'Seat 1: Living ice surface storytelling.' },
+        { id: 'R38', num: 38, batch: 'D', top5: false, cat: '35° Broadcast Camera', title: 'Smooth Aspect-Ratio Framing Guard (390px to 4K)', summary: 'Dynamically balances lateral focal clamping from ultrawide monitors down to 390px phones.', explain: 'Seat 3: Zero lane clipping on any screen ratio.' },
+        { id: 'R39', num: 39, batch: 'D', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Saucer Pass Loft Arc Over Low Obstacles', summary: 'Adds subtle vertical puck loft when Pass Zip is upgraded to Lv 4+.', explain: 'Seat 2: Visualizes elite playmaking progression.' },
+        { id: 'R40', num: 40, batch: 'D', top5: false, cat: 'Arena Atmospheres', title: 'Winter Classic Stadium Floodlight Lens Halo', summary: 'Renders crisp cold-night stadium tower halos above the Level 4 horizon.', explain: 'Seat 1: Signature outdoor stadium broadcast look.' },
+        { id: 'R41', num: 41, batch: 'D', top5: false, cat: 'Skater Animation & Juice', title: 'Fist-Pump Celly Glide During 3-2-1 Countdown', summary: 'Animates the goal scorer raising one glove in celebration while gliding into the countdown.', explain: 'Seat 4: Pure hockey joy after lighting the lamp.' },
+        { id: 'R42', num: 42, batch: 'D', top5: false, cat: 'Locker Hub & Progression', title: 'Trophy Concourse Engraved Timestamp Plaques', summary: 'Records the Arena Level on each unlocked trophy card in the Concourse.', explain: 'Seat 6: Gives players pride in their milestone history.' },
+        { id: 'R43', num: 43, batch: 'D', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Target Corner Distance Pulse Scaling', summary: 'Pulses net target corners faster as the carrier closes within prime slot shooting distance.', explain: 'Seat 2: Helps players time the exact release point.' },
+        { id: 'R44', num: 44, batch: 'D', top5: false, cat: 'Ice Graphics & Lighting', title: 'Blue-Line Entry Speed Shimmer', summary: 'Triggers a subtle cyan ice ripple whenever the carrier crosses an offensive blue line with an active chain.', explain: 'Seat 4: Celebrates clean zone entries.' },
+        { id: 'R45', num: 45, batch: 'D', top5: false, cat: 'Arena Atmospheres', title: 'pond Snowbank Puff on Wide Wing Cuts', summary: 'Kicks up soft powder along the timber snowbanks when skating down outer lanes in Level 1.', explain: 'Seat 4: Tactile pond-hockey charm.' },
+        { id: 'R46', num: 46, batch: 'D', top5: false, cat: 'Skater Animation & Juice', title: 'Defender Stick-Lift Shake on Narrow Dodges', summary: 'Animates bypassed defenders lifting their stick late when you cut lanes at the last instant.', explain: 'Seat 2: Rewards quick-twitch ankle-breaker cuts.' },
+        { id: 'R47', num: 47, batch: 'D', top5: false, cat: 'Locker Hub & Progression', title: 'Quick-Compare Stat Preview on Locker Upgrades', summary: 'Shows exact percentage boost next to each Lv 1-5 upgrade bar in the Locker Stall.', explain: 'Seat 6: Transparent, kid-friendly RPG clarity.' },
+        { id: 'R48', num: 48, batch: 'D', top5: false, cat: '35° Broadcast Camera', title: 'Zero-Jank DPR Clamping on High-Density Phones', summary: 'Caps internal canvas supersampling cleanly at 2x DPR to lock 60fps battery-friendly play.', explain: 'Seat 8: Silky frame pacing on mobile browsers.' },
+
+        // BATCH E (#49 - #60)
+        { id: 'R49', num: 49, batch: 'E', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Give-and-Go Rapid Return Bonus (+3 SP)', summary: 'Awards +3 bonus SP when passing back to the original rush initiator to finish Pass #3.', explain: 'Seat 2: Encourages classic 2-man give-and-go hockey combinations.' },
+        { id: 'R50', num: 50, batch: 'E', top5: false, cat: 'Ice Graphics & Lighting', title: 'Net Mesh Shadow Projection on Goal Crease', summary: 'Projects a crisp subtle shadow of the goal frame onto the blue crease paint.', explain: 'Seat 1: Grounds the oncoming net firmly onto the 3D ice plane.' },
+        { id: 'R51', num: 51, batch: 'E', top5: false, cat: 'Arena Atmospheres', title: 'Championship Crowd Towel Wave in Overtime Tiers', summary: 'Animates white rally towels shimmering in the Level 5+ upper deck.', explain: 'Seat 4: Playoff atmosphere for endless high-score runs.' },
+        { id: 'R52', num: 52, batch: 'E', top5: false, cat: 'Skater Animation & Juice', title: 'Water-Bottle Pop Off Top of Goal Cage', summary: 'Launches the goalie water bottle spinning into the air on top-corner one-timer goals.', explain: 'Seat 4: Every hockey player’s favorite top-shelf detail!' },
+        { id: 'R53', num: 53, batch: 'E', top5: false, cat: 'Locker Hub & Progression', title: 'Custom Stick Tape Contrast Preview on Ice', summary: 'Highlights custom Neon Cyan and Pro Gold stick tape cleanly on all 3 squad wingers.', explain: 'Seat 6: Makes stick tape unlocks immediately noticeable on the ice.' },
+        { id: 'R54', num: 54, batch: 'E', top5: false, cat: '35° Broadcast Camera', title: 'Goal Celebration Slow-Ease Glide', summary: 'Applies a smooth broadcast dolly glide past the rippling net during the first beat of countdown.', explain: 'Seat 1: Lets players savor the net ripple.' },
+        { id: 'R55', num: 55, batch: 'E', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Scissor-Switch Crossing Trail Highlight', summary: 'Tints crossing teammate skate trails emerald when a scissor switch creates a wide-open weak side.', explain: 'Seat 2: Helps players read Level 5 criss-cross weaves intuitively.' },
+        { id: 'R56', num: 56, batch: 'E', top5: false, cat: 'Ice Graphics & Lighting', title: 'Metallic Goal Post Specular Glint', summary: 'Adds a vertical white highlight down both red goal posts for crisp distance visibility.', explain: 'Seat 9: Makes oncoming nets readable 70m up the sheet.' },
+        { id: 'R57', num: 57, batch: 'E', top5: false, cat: 'Arena Atmospheres', title: 'Combine Barn Digital Shot-Speed Radar Readout', summary: 'Flashes simulated MPH shot speed on the net frame when scoring in Level 2 Combine Barn.', explain: 'Seat 4: Fun skills-competition flavor.' },
+        { id: 'R58', num: 58, batch: 'E', top5: false, cat: 'Locker Hub & Progression', title: 'Arena Mastery Star Counter on Tunnel Banner', summary: 'Displays total cleared arenas right above the Tunnel ice portal.', explain: 'Seat 6: Instant visual progress check.' },
+        { id: 'R59', num: 59, batch: 'E', top5: false, cat: 'Skater Animation & Juice', title: 'Crisp Skate-Stop Spray on Shift Summary Whistle', summary: 'Skaters execute a parallel hockey stop with a wall of snow when the shift whistle blows.', explain: 'Seat 4: Authentic shift-end polish.' },
+        { id: 'R60', num: 60, batch: 'E', top5: false, cat: 'Pass Chain & Ice Vision', title: 'Overtime Speed Tier Callout Banner (Lv 6+)', summary: 'Announces Overtime Speed Tiers as players push past Level 5 Pro Championship.', explain: 'Seat 10: Infinite replayability ceiling for elite players.' }
+      ];
+
+      const CARD_MAP = {};
+      ALL_60_UPGRADES.forEach((c) => { CARD_MAP[c.id] = c; });
+
+      const DEFAULT_TASTE = {
+        storageKey: STORAGE_KEYS.TASTE,
+        score: 0,
+        weights: { approve: 3, reject: -5, skip: 0 },
+        totals: { approved: 0, rejected: 0, skipped: 0 },
+        categoryAffinities: {},
+        ledger: []
+      };
+
+      function loadTaste() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.TASTE);
+          if (!raw) {
+            const init = JSON.parse(JSON.stringify(DEFAULT_TASTE));
+            localStorage.setItem(STORAGE_KEYS.TASTE, JSON.stringify(init));
+            return init;
+          }
+          return { ...DEFAULT_TASTE, ...JSON.parse(raw) };
+        } catch (e) {
+          return JSON.parse(JSON.stringify(DEFAULT_TASTE));
+        }
+      }
+
+      function saveTaste() {
+        localStorage.setItem(STORAGE_KEYS.TASTE, JSON.stringify(taste));
+      }
+
+      function buildInitialState() {
+        return {
+          version: '10.9.4',
+          activeTab: 'review',
+          toReview: ALL_60_UPGRADES.slice(0, 12).map((c) => c.id),
+          queued: [], // [{ id, decision: 'approve' | 'skip' | 'reject' }]
+          live: [],   // [id]
+          unseenPool: ALL_60_UPGRADES.slice(12).map((c) => c.id), // Batches B, C, D, E (48 cards)
+          reassessPool: [],
+          rejectedArchive: [],
+          explainedOpen: {},
+          deployCount: 0
+        };
+      }
+
+      function loadBoardState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.REPORT_STATE);
+          if (!raw) {
+            const fresh = buildInitialState();
+            localStorage.setItem(STORAGE_KEYS.REPORT_STATE, JSON.stringify(fresh));
+            localStorage.setItem(STORAGE_KEYS.LIVE_UPGRADES, JSON.stringify([]));
+            return fresh;
+          }
+          const parsed = JSON.parse(raw);
+          return { ...buildInitialState(), ...parsed };
+        } catch (e) {
+          return buildInitialState();
+        }
+      }
+
+      let taste = loadTaste();
+      let board = loadBoardState();
+      let deployLock = false;
+
+      function saveBoardState() {
+        localStorage.setItem(STORAGE_KEYS.REPORT_STATE, JSON.stringify(board));
+        localStorage.setItem(STORAGE_KEYS.LIVE_UPGRADES, JSON.stringify(board.live));
+      }
+
+      function showToast(msg, isWarn) {
+        const el = document.getElementById('toast-bar');
+        el.textContent = msg;
+        el.className = 'toast-bar visible' + (isWarn ? ' warn' : '');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => {
+          el.classList.remove('visible');
+        }, 2800);
+      }
+
+      function applyTasteDelta(cardId, decision, multiplier) {
+        const card = CARD_MAP[cardId];
+        if (!card) return;
+        const m = multiplier || 1;
+        const delta = (decision === 'approve' ? 3 : (decision === 'reject' ? -5 : 0)) * m;
+        taste.score += delta;
+        taste.categoryAffinities[card.cat] = (taste.categoryAffinities[card.cat] || 0) + delta;
+
+        if (m > 0) {
+          if (decision === 'approve') taste.totals.approved = (taste.totals.approved || 0) + 1;
+          if (decision === 'reject') taste.totals.rejected = (taste.totals.rejected || 0) + 1;
+          if (decision === 'skip') taste.totals.skipped = (taste.totals.skipped || 0) + 1;
+          taste.ledger.unshift({ id: cardId, decision, delta, at: new Date().toISOString() });
+          taste.ledger = taste.ledger.slice(0, 120);
+        } else {
+          if (decision === 'approve') taste.totals.approved = Math.max(0, (taste.totals.approved || 0) - 1);
+          if (decision === 'reject') taste.totals.rejected = Math.max(0, (taste.totals.rejected || 0) - 1);
+          if (decision === 'skip') taste.totals.skipped = Math.max(0, (taste.totals.skipped || 0) - 1);
+        }
+        saveTaste();
+      }
+
+      /* ======================================================================
+         DECISION HANDLERS: APPROVE / SKIP / EXPLAIN / REJECT
+         ====================================================================== */
+      function decideCard(cardId, decision) {
+        if (decision === 'explain') {
+          board.explainedOpen[cardId] = !board.explainedOpen[cardId];
+          saveBoardState();
+          render();
+          return;
+        }
+
+        const idx = board.toReview.indexOf(cardId);
+        if (idx === -1) return;
+
+        board.toReview.splice(idx, 1);
+        // Prevent any duplicate entry in queued
+        board.queued = board.queued.filter((q) => q.id !== cardId);
+        board.queued.push({ id: cardId, decision: decision });
+
+        applyTasteDelta(cardId, decision, 1);
+        saveBoardState();
+
+        const label = decision === 'approve' ? '✅ Approved (+3 Taste)' : (decision === 'reject' ? '❌ Rejected (-5 Taste)' : '⏭️ Skipped (0 Taste)');
+        showToast(`${label} → moved to 🛠️ Queued (${board.queued.length})`);
+        render();
+      }
+
+      function moveBackToReview(cardId) {
+        const qIdx = board.queued.findIndex((q) => q.id === cardId);
+        if (qIdx === -1) return;
+        const item = board.queued[qIdx];
+
+        if (board.toReview.length >= INBOX_CAP) {
+          showToast('📥 To Review is already at its 12-card cap! Deploy or decide a card first.', true);
+          return;
+        }
+
+        board.queued.splice(qIdx, 1);
+        applyTasteDelta(cardId, item.decision, -1);
+
+        if (!board.toReview.includes(cardId)) {
+          board.toReview.push(cardId);
+          board.toReview.sort((a, b) => CARD_MAP[a].num - CARD_MAP[b].num);
+        }
+        saveBoardState();
+        showToast('↩️ Card returned to 📥 To Review.');
+        render();
+      }
+
+      /* ======================================================================
+         TOP-UP MODE DEPLOYMENT & 0-CARD / DOUBLE-TAP GUARD
+         ====================================================================== */
+      function deployQueuedAndTopUp() {
+        if (deployLock) return false;
+        if (board.queued.length === 0) {
+          showToast('⚠️ 0-Card Guard: Queue at least 1 card before deploying.', true);
+          return false;
+        }
+
+        deployLock = true;
+        try {
+          const untouchedCount = board.toReview.length;
+          let newlyLive = 0;
+
+          board.queued.forEach((item) => {
+            if (item.decision === 'approve') {
+              if (!board.live.includes(item.id)) {
+                board.live.unshift(item.id);
+                newlyLive += 1;
+              }
+            } else if (item.decision === 'skip') {
+              if (!board.reassessPool.includes(item.id)) {
+                board.reassessPool.push(item.id);
+              }
+            } else if (item.decision === 'reject') {
+              if (!board.rejectedArchive.includes(item.id)) {
+                board.rejectedArchive.push(item.id);
+              }
+            }
+          });
+
+          board.queued = [];
+
+          // Pull exactly (12 - untouchedCount) unseen cards from Batches B-E!
+          const needed = Math.max(0, INBOX_CAP - untouchedCount);
+          let pulledCount = 0;
+
+          while (pulledCount < needed && board.unseenPool.length > 0) {
+            const nextId = board.unseenPool.shift();
+            if (!board.toReview.includes(nextId) && !board.live.includes(nextId)) {
+              board.toReview.push(nextId);
+              pulledCount += 1;
+            }
+          }
+
+          // Fallback to skipped reassessPool only if Batches B-E are exhausted
+          while (pulledCount < needed && board.reassessPool.length > 0) {
+            const reassessId = board.reassessPool.shift();
+            if (!board.toReview.includes(reassessId) && !board.live.includes(reassessId)) {
+              board.toReview.push(reassessId);
+              pulledCount += 1;
+            }
+          }
+
+          board.deployCount += 1;
+          saveBoardState();
+          showToast(`🚀 Deployed ${newlyLive} to Live! Kept ${untouchedCount} untouched + topped up ${pulledCount} new cards → ${board.toReview.length} in Review.`);
+          render();
+          return true;
+        } finally {
+          setTimeout(() => { deployLock = false; }, 160);
+        }
+      }
+
+      function undoLiveCard(cardId) {
+        const idx = board.live.indexOf(cardId);
+        if (idx === -1) return;
+        board.live.splice(idx, 1);
+
+        // Return cleanly to Queued so To Review never exceeds the 12-card cap
+        board.queued = board.queued.filter((q) => q.id !== cardId);
+        board.queued.unshift({ id: cardId, decision: 'approve' });
+        saveBoardState();
+        showToast('↩️ 1-Click Undo complete → moved from ✅ Live back to 🛠️ Queued.');
+        render();
+      }
+
+      /* ======================================================================
+         SINGLE-LISTING ACTIVE TAB RENDERER (<= 56 BUTTONS GUARANTEED)
+         ====================================================================== */
+      function render() {
+        document.getElementById('tab-review').textContent = `📥 To Review (${board.toReview.length})`;
+        document.getElementById('tab-queued').textContent = `🛠️ Queued (${board.queued.length})`;
+        document.getElementById('tab-live').textContent = `✅ Live in App (${board.live.length})`;
+
+        ['review', 'queued', 'live'].forEach((t) => {
+          const btn = document.getElementById('tab-' + t);
+          const act = board.activeTab === t;
+          btn.classList.toggle('active', act);
+          btn.setAttribute('aria-selected', act ? 'true' : 'false');
+        });
+
+        document.getElementById('taste-readout').textContent = `Taste Score: ${taste.score >= 0 ? '+' + taste.score : taste.score}`;
+        document.getElementById('pool-readout').textContent = `Pool: ${board.unseenPool.length} unseen`;
+
+        const container = document.getElementById('cards-container');
+
+        if (board.activeTab === 'review') {
+          if (board.toReview.length === 0) {
+            container.innerHTML = `<div class="empty-box">🎉 Inbox Zero! Switch to <strong>🛠️ Queued (${board.queued.length})</strong> to deploy and top up from Batches B–E.</div>`;
+            return;
+          }
+
+          container.innerHTML = board.toReview.slice(0, INBOX_CAP).map((id) => {
+            const c = CARD_MAP[id];
+            const isOpen = !!board.explainedOpen[id];
+            return `
+              <article class="upgrade-card ${c.top5 ? 'consensus' : ''}" data-card-id="${c.id}">
+                <div class="card-badges">
+                  <span class="badge badge-num">#${c.num} • Batch ${c.batch}</span>
+                  ${c.top5 ? '<span class="badge badge-consensus">🏆 TOP 5 CONSENSUS</span>' : ''}
+                  <span class="badge badge-cat">${c.cat}</span>
+                </div>
+                <h2 class="card-title">${c.title}</h2>
+                <p class="card-summary">${c.summary}</p>
+                <div class="explain-drawer ${isOpen ? 'open' : ''}">${c.explain}</div>
+                <div class="decision-grid">
+                  <button type="button" class="dec-btn dec-approve" data-decide="approve" data-id="${c.id}">✅ Approve</button>
+                  <button type="button" class="dec-btn dec-skip" data-decide="skip" data-id="${c.id}">⏭️ Skip &amp; Reassess</button>
+                  <button type="button" class="dec-btn dec-explain" data-decide="explain" data-id="${c.id}">🔍 Explain This</button>
+                  <button type="button" class="dec-btn dec-reject" data-decide="reject" data-id="${c.id}">❌ Reject</button>
+                </div>
+              </article>
+            `;
+          }).join('');
+        } else if (board.activeTab === 'queued') {
+          const untouchedCount = board.toReview.length;
+          const willPull = Math.min(board.unseenPool.length + board.reassessPool.length, Math.max(0, INBOX_CAP - untouchedCount));
+
+          const deployBoxHtml = `
+            <section class="deploy-box">
+              <div class="deploy-meta">
+                <strong>Top-Up Math Ready:</strong> ${untouchedCount} untouched in Review + <strong>${willPull}</strong> unseen from Batches B–E = <strong>${untouchedCount + willPull}</strong> cards after deploy.
+              </div>
+              <button type="button" id="btn-deploy-queued" class="deploy-cta" ${board.queued.length === 0 ? 'disabled' : ''}>
+                🚀 DEPLOY QUEUED &amp; TOP UP INBOX TO 12
+              </button>
+            </section>
+          `;
+
+          if (board.queued.length === 0) {
+            container.innerHTML = deployBoxHtml + `<div class="empty-box">No cards queued yet. Approve, Skip, or Reject cards in <strong>📥 To Review</strong> first.</div>`;
+            return;
+          }
+
+          const cardsHtml = board.queued.map((item) => {
+            const c = CARD_MAP[item.id];
+            const decBadge = item.decision === 'approve'
+              ? '<span class="badge badge-decision">✅ Approved (+3)</span>'
+              : (item.decision === 'skip'
+                ? '<span class="badge badge-decision skip">⏭️ Skipped (0)</span>'
+                : '<span class="badge badge-decision reject">❌ Rejected (-5)</span>');
+            return `
+              <article class="upgrade-card" data-card-id="${c.id}">
+                <div class="card-badges">
+                  <span class="badge badge-num">#${c.num} • Batch ${c.batch}</span>
+                  ${decBadge}
+                  <span class="badge badge-cat">${c.cat}</span>
+                </div>
+                <h2 class="card-title">${c.title}</h2>
+                <p class="card-summary">${c.summary}</p>
+                <button type="button" class="single-action-btn" data-move-back="${c.id}">↩️ Move Back to Review</button>
+              </article>
+            `;
+          }).join('');
+
+          container.innerHTML = deployBoxHtml + cardsHtml;
+        } else {
+          if (board.live.length === 0) {
+            container.innerHTML = `<div class="empty-box">No upgrades deployed yet. Approve items in <strong>📥 To Review</strong> and deploy them from <strong>🛠️ Queued</strong>!</div>`;
+            return;
+          }
+
+          container.innerHTML = board.live.map((id) => {
+            const c = CARD_MAP[id];
+            return `
+              <article class="upgrade-card" data-card-id="${c.id}">
+                <div class="card-badges">
+                  <span class="badge badge-num">#${c.num} • Batch ${c.batch}</span>
+                  <span class="badge badge-decision">✅ LIVE IN APP</span>
+                  <span class="badge badge-cat">${c.cat}</span>
+                </div>
+                <h2 class="card-title">${c.title}</h2>
+                <p class="card-summary">${c.summary}</p>
+                <button type="button" class="single-action-btn" data-undo-live="${c.id}">↩️ 1-Click Undo</button>
+              </article>
+            `;
+          }).join('');
+        }
+      }
+
+      document.querySelector('.sticky-tabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-tab]');
+        if (!btn) return;
+        board.activeTab = btn.getAttribute('data-tab');
+        saveBoardState();
+        render();
+      });
+
+      document.getElementById('cards-container').addEventListener('click', (e) => {
+        const decBtn = e.target.closest('[data-decide]');
+        if (decBtn) {
+          decideCard(decBtn.getAttribute('data-id'), decBtn.getAttribute('data-decide'));
+          return;
+        }
+
+        const backBtn = e.target.closest('[data-move-back]');
+        if (backBtn) {
+          moveBackToReview(backBtn.getAttribute('data-move-back'));
+          return;
+        }
+
+        const deployBtn = e.target.closest('#btn-deploy-queued');
+        if (deployBtn) {
+          deployQueuedAndTopUp();
+          return;
+        }
+
+        const undoBtn = e.target.closest('[data-undo-live]');
+        if (undoBtn) {
+          undoLiveCard(undoBtn.getAttribute('data-undo-live'));
+        }
+      });
+
+      render();
+
+      window.__SYNAPZ_RUSH_BOARD__ = {
+        storageKeys: STORAGE_KEYS,
+        allUpgradesCount: ALL_60_UPGRADES.length,
+        getBoardState: () => board,
+        getTaste: () => taste,
+        decideCard,
+        moveBackToReview,
+        deployQueuedAndTopUp,
+        undoLiveCard
+      };
+    })();
+  </script>
+</body>
+</html>

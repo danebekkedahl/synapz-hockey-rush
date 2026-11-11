@@ -1,0 +1,17 @@
+{
+  "name": "synapz-hockey-rush",
+  "version": "10.9.4",
+  "private": true,
+  "description": "Synapz Hockey Rush — Graphics-First 35-Degree Broadcast Ice-Vision Game (v10.9.4 Playbook)",
+  "scripts": {
+    "start": "node server.js",
+    "audit": "node deep_playtest_audit.js",
+    "verify:devices": "node verify_multi_device.js --url=http://localhost:8090",
+    "verify:live": "node verify_multi_device.js --url=https://danebekkedahl.github.io/synapz-hockey-rush",
+    "deploy": "node deploy-github-pages.js"
+  },
+  "devDependencies": {
+    "isomorphic-git": "^1.27.2",
+    "playwright": "^1.50.0"
+  }
+}

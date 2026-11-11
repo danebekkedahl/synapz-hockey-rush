@@ -1,0 +1,30 @@
+{
+  "project": "Synapz Hockey Rush",
+  "architecture": "v10.9.4",
+  "storageKey": "synapz_rush_taste",
+  "coFounders": [
+    { "name": "Dane Bekkedahl", "email": "danebekkedahl@gmail.com", "seat": 0 },
+    { "name": "Evan Bekkedahl", "email": "evanbekk@gmail.com", "seat": 0 }
+  ],
+  "scoringWeights": {
+    "approve": 3,
+    "reject": -5,
+    "skip": 0
+  },
+  "tasteScore": 0,
+  "totals": {
+    "approved": 0,
+    "rejected": 0,
+    "skipped": 0,
+    "undone": 0
+  },
+  "categoryAffinities": {
+    "Ice Graphics & Lighting": 0,
+    "35° Broadcast Camera": 0,
+    "Pass Chain & Ice Vision": 0,
+    "Skater Animation & Juice": 0,
+    "Arena Atmospheres": 0,
+    "Locker Hub & Progression": 0
+  },
+  "decisionLedger": []
+}
