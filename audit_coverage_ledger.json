@@ -7,176 +7,176 @@
     "danebekkedahl@gmail.com",
     "evanbekk@gmail.com"
   ],
-  "rotationVersion": 1,
-  "lastAuditRun": "2026-11-11T16:59:46.790Z",
+  "rotationVersion": 2,
+  "lastAuditRun": "2026-11-12T00:34:59.815Z",
   "plays": [
     {
       "playId": "P01",
       "category": "Viewport",
       "title": "index.html 0px Horizontal Overflow at 390x844",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P02",
       "category": "Viewport",
       "title": "report.html 0px Horizontal Overflow at 390x844",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P03",
       "category": "Ergonomics",
       "title": "Strict <= 4 Thumb-Zone Action Buttons During Gameplay",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P04",
       "category": "InboxZero",
       "title": "report.html <= 56 Total Decision Buttons Cap",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P05",
       "category": "Isolation",
       "title": "100% synapz_rush_ Storage Key Namespace Isolation",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P06",
       "category": "Safety",
       "title": "window.__TEST_MODE__ = true Zero Outbound Email/Spam Guard",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P07",
       "category": "Camera",
       "title": "35-Degree Elevated Broadcast Ice Projection & Multi-Rink Sightlines",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P08",
       "category": "Graphics",
       "title": "Specular Reflections, Blade Carve Trails & Snow-Spray Bursts",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P09",
       "category": "IceVision",
       "title": "Real-Time On-Ice Lead Rings (Emerald / Amber / Crimson)",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P10",
       "category": "Gameplay",
       "title": "Mandatory 3-Pass Rule Keeps Shoot Locked Until 3/3 Passes",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P11",
       "category": "Camera",
       "title": "Camera Whip-Pan Trajectory Transfer & Receiver Control Switch on Pass",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P12",
       "category": "Gameplay",
       "title": "One-Timer Armed State & Illuminated Net Target Corners on Pass #3",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P13",
       "category": "Gameplay",
       "title": "Goal Horn, Net Ripple, Story Point Award & 3-2-1 Puck Drop Countdown",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P14",
       "category": "Progression",
       "title": "3-Goal Level Completion & Base Ice Speed Escalation",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P15",
       "category": "Gameplay",
       "title": "3-Puck Shift Quiver Turnover Math (0/3 Pass Reset, 1s Stumble, -1 Puck)",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P16",
       "category": "Arenas",
       "title": "5 Distinct Themed Obstacle Arenas (Pond, Combine, Travel, Classic, Pro)",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P17",
       "category": "Weaving",
       "title": "Progressive Teammate Weaving (L1-2 Parallel, L3-4 Diagonal, L5+ Scissor/Decoy)",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P18",
       "category": "Hub",
       "title": "2-Button Entry Gate & 5 Illustrated Point-and-Click Locker Hub Rooms",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P19",
       "category": "Economy",
       "title": "Locker Stall 4-Stat Story Point Upgrades (Speed, Pass Zip, Vision, Shot Power)",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P20",
       "category": "Speech",
       "title": "Peer Guides (Leo/Maya/Coach Vance) 3-Stage Bubble -> Bottom-Left Replay Circle",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P21",
       "category": "Speech",
       "title": "toNaturalTalk() Sanitizer Strips All [Brackets] & Diagnostic Leaks",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P22",
       "category": "Governance",
       "title": "Seat 0 Red-Flag Modal Captures Live Context Locally Without Leaks",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P23",
       "category": "InboxZero",
       "title": "Top-Up Mode Pulls Exactly (12 - untouchedCount) Unseen Cards From Batches B-E",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     },
     {
       "playId": "P24",
       "category": "InboxZero",
       "title": "0-Card Deploy Double-Tap Guard, Move Back to Review & 1-Click Live Undo",
       "status": "passed",
-      "runs": 2
+      "runs": 3
     }
   ]
 }

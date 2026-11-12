@@ -8,19 +8,19 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Hockey Rush" />
-  <title>Synapz Hockey Rush — 35° Broadcast Ice Vision</title>
-  <link rel="manifest" href="manifest.json" />
+  <title>Synapz Hockey Rush — 35° Broadcast Ice Vision (v1.2)</title>
+  <link rel="manifest" href="manifest.json?v=1.2" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1.2" />
 </head>
 <body>
   <div id="app-shell" class="app-shell">
-    <!-- 35-Degree Elevated Broadcast Ice Canvas -->
-    <canvas id="ice-canvas" aria-label="Synapz Hockey Rush 35-Degree Ice Rink"></canvas>
+    <!-- 35-Degree Elevated Broadcast Ice Canvas (100% Unobstructed Direct-Touch Sheet) -->
+    <canvas id="ice-canvas" aria-label="Synapz Hockey Rush 35-Degree Direct-Touch Ice Rink"></canvas>
 
-    <!-- Top Broadcast Scorebug & Telemetry HUD (Active Gameplay) -->
+    <!-- Top Broadcast Scorebug & Telemetry HUD (Active Gameplay — 0 Bottom Buttons) -->
     <header id="hud-top" class="hud-top hidden" aria-live="polite">
       <div class="scorebug-row scorebug-primary">
         <div class="arena-pill" id="hud-arena-name" title="Current Arena">L1 • Twilight Pond</div>
@@ -44,12 +44,17 @@
     <!-- On-Ice Center Broadcast Callout & 3-2-1 Countdown -->
     <div id="ice-callout" class="ice-callout hidden" aria-live="assertive">
       <div id="callout-badge" class="callout-badge">ONE-TIMER ARMED!</div>
-      <div id="callout-sub" class="callout-sub">Glowing top corners unlocked — tap Shoot!</div>
+      <div id="callout-sub" class="callout-sub">Tap the glowing net corners to score!</div>
     </div>
 
     <div id="countdown-overlay" class="countdown-overlay hidden" aria-live="assertive">
       <div id="countdown-number" class="countdown-number">3</div>
       <div id="countdown-label" class="countdown-label">NEXT RUSH INCOMING</div>
+    </div>
+
+    <!-- Subtle Auto-Fading 3-Second Level 1 On-Ice Micro-Hint -->
+    <div id="ice-micro-hint" class="ice-micro-hint hidden" role="note">
+      SWIPE ICE TO MOVE • TAP TEAMMATE TO PASS • TAP NET AT 3/3
     </div>
 
     <!-- 3-Stage Word-Streaming Peer Guide Speech Bubble (~25% Quadrant -> Bottom-Left Replay Circle) -->
@@ -67,36 +72,16 @@
       <span class="replay-orb-sound">🔊</span>
     </div>
 
-    <!-- STRICT <= 4 THUMB-ZONE GAMEPLAY ACTION CONTROLS -->
-    <nav id="thumb-controls" class="thumb-controls hidden" aria-label="Gameplay Controls">
-      <button type="button" id="btn-left" class="ctrl-btn ctrl-move" aria-label="Skate Left Lane">
-        <span class="ctrl-icon">⬅️</span>
-        <span class="ctrl-label">Left</span>
-      </button>
-      <button type="button" id="btn-right" class="ctrl-btn ctrl-move" aria-label="Skate Right Lane">
-        <span class="ctrl-icon">➡️</span>
-        <span class="ctrl-label">Right</span>
-      </button>
-      <button type="button" id="btn-pass" class="ctrl-btn ctrl-pass" aria-label="Pass to Lead Ring">
-        <span class="ctrl-icon">🏒</span>
-        <span class="ctrl-label">Pass</span>
-      </button>
-      <button type="button" id="btn-shoot" class="ctrl-btn ctrl-shoot" disabled aria-label="Shoot One-Timer">
-        <span class="ctrl-icon">🎯</span>
-        <span class="ctrl-label">Shoot</span>
-      </button>
-    </nav>
-
     <!-- 2-BUTTON ENTRY GATE -->
     <section id="entry-gate" class="overlay-screen entry-gate">
       <div class="entry-card">
         <div class="entry-crest-row">
-          <span class="entry-badge">v10.9.4 • 35° BROADCAST ICE VISION</span>
+          <span class="entry-badge">v1.2 • DIRECT-TOUCH 35° ICE VISION</span>
           <a href="#redflag" id="gate-redflag-link" class="gate-flag-link" title="Seat 0 Red-Flag Modal">🚩</a>
         </div>
         <h1 class="entry-title">SYNAPZ <span>HOCKEY RUSH</span></h1>
         <p class="entry-subtitle">
-          Read all 3 lanes up the sheet. Thread 3 tape-to-tape passes into glowing Lead Rings to arm the top-shelf One-Timer.
+          Swipe the ice to deke lanes. Tap open teammates or glowing Lead Rings for 3 passes, then tap the oncoming net corners to rip a One-Timer.
         </p>
 
         <div class="entry-legend">
@@ -154,7 +139,7 @@
       <div class="modal-card">
         <div class="modal-kicker">SHIFT WHISTLE • 0 PUCKS LEFT</div>
         <h2 class="modal-title" id="shift-modal-title">Shift Complete</h2>
-        <p class="modal-desc" id="shift-modal-desc">Keep your head up and scan for Emerald Lead Rings ahead of defender sticks.</p>
+        <p class="modal-desc" id="shift-modal-desc">Keep your head up and tap teammates with open Emerald Lead Rings ahead of defender sticks.</p>
         <div class="shift-stats-grid">
           <div class="shift-stat"><span>Arena</span><strong id="sum-arena">Level 1</strong></div>
           <div class="shift-stat"><span>Goals</span><strong id="sum-goals">0 / 3</strong></div>
@@ -188,6 +173,6 @@
     </section>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=1.2"></script>
 </body>
 </html>

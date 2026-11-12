@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SYNAPZ HOCKEY RUSH — v10.9.4 Playbook Architecture
+   SYNAPZ HOCKEY RUSH — v1.2 Direct-Touch Vision Upgrade (v10.9.4 Playbook)
    100% Standalone Graphics-First 35° Broadcast Ice-Vision Runner
    Storage Namespace: synapz_rush_*
    ========================================================================== */
@@ -13,6 +13,12 @@
   };
 
   const CAMERA_ELEVATION_DEG = 35;
+  const LEVEL_1_BASE_SPEED = 12.55; // 50% slower than v1.0 (~25.1)
+  const LEVEL_SPEED_GROWTH = 1.15;  // +15% compounding per level
+  const SWIPE_LANE_THRESHOLD_PX = 26;
+  const TAP_MAX_TRAVEL_PX = 20;
+  const TEAMMATE_TOUCH_PAD_PX = 42;
+  const NET_TOUCH_PAD_PX = 38;
   const LANE_X = [-7.8, 0, 7.8];
 
   const ARENAS = [
@@ -22,7 +28,7 @@
       shortName: 'Twilight Pond',
       name: 'Backyard Twilight Pond',
       weaveLabel: 'Steady Parallel Lanes',
-      baseSpeed: 24,
+      baseSpeed: LEVEL_1_BASE_SPEED,
       skyTop: '#0b1026',
       skyBot: '#1e1b4b',
       iceTop: '#dbeafe',
@@ -40,7 +46,7 @@
       shortName: 'Combine Barn',
       name: 'Skills Combine Barn',
       weaveLabel: 'Parallel Support + Fast Sticks',
-      baseSpeed: 28,
+      baseSpeed: +(LEVEL_1_BASE_SPEED * Math.pow(LEVEL_SPEED_GROWTH, 1)).toFixed(2),
       skyTop: '#04101f',
       skyBot: '#0f2942',
       iceTop: '#e0f2fe',
@@ -58,7 +64,7 @@
       shortName: 'Travel Rink',
       name: 'Local Travel Rink',
       weaveLabel: 'Diagonal Slot Cuts',
-      baseSpeed: 32,
+      baseSpeed: +(LEVEL_1_BASE_SPEED * Math.pow(LEVEL_SPEED_GROWTH, 2)).toFixed(2),
       skyTop: '#131c31',
       skyBot: '#263452',
       iceTop: '#e2e8f0',
@@ -76,7 +82,7 @@
       shortName: 'Winter Classic',
       name: 'Outdoor Winter Classic',
       weaveLabel: 'Diagonal Cuts + Stadium Flurries',
-      baseSpeed: 36,
+      baseSpeed: +(LEVEL_1_BASE_SPEED * Math.pow(LEVEL_SPEED_GROWTH, 3)).toFixed(2),
       skyTop: '#030712',
       skyBot: '#0f172a',
       iceTop: '#cffafe',
@@ -94,7 +100,7 @@
       shortName: 'Pro Championship',
       name: 'Pro Championship Arena',
       weaveLabel: 'Scissor Switches & Covered Decoys',
-      baseSpeed: 40,
+      baseSpeed: +(LEVEL_1_BASE_SPEED * Math.pow(LEVEL_SPEED_GROWTH, 4)).toFixed(2),
       skyTop: '#09071a',
       skyBot: '#1e1646',
       iceTop: '#e0e7ff',
@@ -135,12 +141,12 @@
       speaker: 'Leo • Pond Winger (8U–10U)',
       avatar: '🧒',
       cues: {
-        start: '[DIAG:SHIFT_START] Eyes up the ice! Hit three green lead rings in a row to power up our big one-timer!',
-        pass1: '[STATE:PASS_1] Nice crisp pass! Keep skating and spot the next green ring ahead!',
-        armed: '[SYS:ARMED] One-timer armed! Aim for the glowing net corners and tap Shoot!',
-        goal: '[GOAL_EVENT] Top shelf! What a rocket! Get ready for the next puck drop!',
-        turnover: '[WARN:TURNOVER] Oof, stick check! Shake it off and look for the open green lane!',
-        levelup: '[LVL_UP] Huge hat trick! Moving up to faster ice in the next arena!'
+        start: '[DIAG:SHIFT_START] Swipe the ice to dodge, and tap three teammates with green rings to unlock our big shot!',
+        pass1: '[STATE:PASS_1] Awesome pass! Scan up the ice and tap the next open teammate!',
+        armed: '[SYS:ARMED] One-timer armed! Tap a glowing corner of the oncoming net to score!',
+        goal: '[GOAL_EVENT] Top shelf! What a snipe! Get set for the next puck drop!',
+        turnover: '[WARN:TURNOVER] Stick check! Swipe to an open lane and tap a green ring!',
+        levelup: '[LVL_UP] Hat trick! Moving up to the next rink with 15 percent faster ice!'
       }
     },
     maya: {
@@ -150,12 +156,12 @@
       speaker: 'Maya • Playmaker Center (11U–14U)',
       avatar: '👧',
       cues: {
-        start: '[DIAG:SHIFT_START] Scan all three lanes early. Zip the puck into Emerald rings before defenders close the gap.',
-        pass1: '[STATE:PASS_1] Clean whip-pan reception! Read the weak-side winger cutting up ice.',
-        armed: '[SYS:ARMED] Three-pass chain complete! Upper corners are lit green and gold — let it rip!',
-        goal: '[GOAL_EVENT] Bar down! Tape-to-tape puck movement froze the goalie cold.',
-        turnover: '[WARN:TURNOVER] Crimson ring means a stick is in the lane. Cut sideways first to open an angle.',
-        levelup: '[LVL_UP] Arena cleared! Watch for sharper diagonal slot cuts at this higher pace.'
+        start: '[DIAG:SHIFT_START] Eyes up the sheet. Swipe to cut lanes and tap open Emerald Lead Rings directly.',
+        pass1: '[STATE:PASS_1] Clean whip-pan transfer! Spot the weak-side winger before the defender closes.',
+        armed: '[SYS:ARMED] Three passes complete! Upper net corners are lit — tap the net corner you want!',
+        goal: '[GOAL_EVENT] Bar down! Picking your own pass targets froze the goalie.',
+        turnover: '[WARN:TURNOVER] Crimson ring means that pass lane is blocked. Swipe sideways first to create a seam.',
+        levelup: '[LVL_UP] Level cleared! Watch the diagonal slot weaves and hit those Emerald rings in stride.'
       }
     },
     vance: {
@@ -165,12 +171,12 @@
       speaker: 'Coach Vance • Bench Tactician (15U+)',
       avatar: '🧢',
       cues: {
-        start: '[DIAG:SHIFT_START] Puck moves faster than skates. String three tape-to-tape passes to unlock the high-slot one-timer.',
-        pass1: '[STATE:PASS_1] Good seam transfer. Keep your head on a swivel for the next support triangle.',
-        armed: '[SYS:ARMED] Defense is stretched! One-timer is hot — hammer those illuminated upper corners!',
-        goal: '[GOAL_EVENT] Textbook rush execution. Reset your feet for the three-two-one drop.',
-        turnover: '[WARN:TURNOVER] Forced pass into coverage. Change lanes to pull the defender stick out of the seam.',
-        levelup: '[LVL_UP] Championship tempo unlocked. Read the scissor switches and look off covered decoys.'
+        start: '[DIAG:SHIFT_START] Full-ice sightlines open. Deceive sticks with lateral swipes and tap open targets up ice.',
+        pass1: '[STATE:PASS_1] Crisp seam transfer. Keep scanning weak side for Pass 2.',
+        armed: '[SYS:ARMED] One-timer hot! Tap either illuminated top corner on the oncoming cage!',
+        goal: '[GOAL_EVENT] Textbook rush finish. Reset your edges for the three-two-one drop.',
+        turnover: '[WARN:TURNOVER] Telegraphed into a stick blade. Change lanes or hit the open weak-side option.',
+        levelup: '[LVL_UP] Next pace tier unlocked. Look off covered decoys and hit the crossing winger.'
       }
     }
   };
@@ -195,7 +201,7 @@
      PROFILE & PERSISTENT STORAGE (STRICT synapz_rush_* ISOLATION)
      ========================================================================== */
   const DEFAULT_PROFILE = {
-    version: '10.9.4',
+    version: '1.2.0',
     guideId: 'maya',
     selectedLevel: 1,
     unlockedLevel: 1,
@@ -243,9 +249,7 @@
   function saveProfile() {
     try {
       localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
-    } catch (e) {
-      /* ignore quota errors */
-    }
+    } catch (_) {}
     syncHudValues();
   }
 
@@ -290,26 +294,17 @@
       gain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + duration);
-    } catch (e) { /* safe audio fallback */ }
+    } catch (_) {}
   }
 
-  function sfxCut() {
-    playTone(210, 'sawtooth', 0.09, 0.045, 95);
-  }
-
-  function sfxPass(chainNum) {
-    playTone(320 + chainNum * 90, 'triangle', 0.12, 0.09, 520 + chainNum * 110);
-  }
-
+  function sfxCut() { playTone(210, 'sawtooth', 0.08, 0.045, 98); }
+  function sfxPass(chainNum) { playTone(330 + chainNum * 90, 'triangle', 0.12, 0.09, 530 + chainNum * 110); }
+  function sfxNudge() { playTone(165, 'sine', 0.11, 0.06, 130); }
   function sfxArmed() {
-    playTone(523.25, 'sine', 0.16, 0.1, 659.25);
-    setTimeout(() => playTone(783.99, 'triangle', 0.24, 0.11, 1046.5), 90);
+    playTone(523.25, 'sine', 0.15, 0.1, 659.25);
+    setTimeout(() => playTone(783.99, 'triangle', 0.22, 0.11, 1046.5), 85);
   }
-
-  function sfxTurnover() {
-    playTone(170, 'sawtooth', 0.28, 0.1, 72);
-  }
-
+  function sfxTurnover() { playTone(170, 'sawtooth', 0.28, 0.1, 72); }
   function sfxGoalHorn() {
     const ctx = getAudio();
     if (!ctx) return;
@@ -317,7 +312,6 @@
       playTone(f, 'sawtooth', 0.95, 0.065, f * 0.99);
     });
   }
-
   function sfxCountdownBeep(isFinal) {
     playTone(isFinal ? 880 : 440, 'sine', isFinal ? 0.24 : 0.12, 0.08);
   }
@@ -332,9 +326,10 @@
   const speechDismissEl = document.getElementById('speech-dismiss');
   const replayOrbEl = document.getElementById('speech-replay-orb');
   const replayOrbAvatarEl = document.getElementById('replay-orb-avatar');
+  const microHintEl = document.getElementById('ice-micro-hint');
 
   const speechState = {
-    stage: 0, // 0 hidden, 1 streaming, 2 hold, 3 replay-orb
+    stage: 0,
     lastRawText: '',
     lastCleanText: '',
     streamTimer: null,
@@ -417,8 +412,34 @@
     }
   });
 
+  let microHintFadeTimer = null;
+  let microHintHideTimer = null;
+  function showLevel1MicroHint() {
+    clearTimeout(microHintFadeTimer);
+    clearTimeout(microHintHideTimer);
+    const cleanHint = toNaturalTalk('SWIPE ICE TO MOVE • TAP TEAMMATE TO PASS • TAP NET AT 3/3');
+    microHintEl.textContent = cleanHint;
+    microHintEl.classList.remove('hidden', 'fading');
+
+    microHintFadeTimer = setTimeout(() => {
+      microHintEl.classList.add('fading');
+    }, 2600);
+
+    microHintHideTimer = setTimeout(() => {
+      microHintEl.classList.add('hidden');
+      microHintEl.classList.remove('fading');
+    }, 3050);
+  }
+
+  function hideMicroHint() {
+    clearTimeout(microHintFadeTimer);
+    clearTimeout(microHintHideTimer);
+    microHintEl.classList.add('hidden');
+    microHintEl.classList.remove('fading');
+  }
+
   /* ==========================================================================
-     GAMEPLAY STATE & WORLD ENTITIES
+     GAMEPLAY STATE & DISTANCE-DRIVEN WORLD ENTITIES
      ========================================================================== */
   const canvas = document.getElementById('ice-canvas');
   const ctx = canvas.getContext('2d');
@@ -427,8 +448,8 @@
     mode: 'gate', // 'gate' | 'hub' | 'playing' | 'shift_over'
     activeHubRoom: 'tunnel',
     level: 1,
-    baseIceSpeed: 24,
-    currentSpeed: 24,
+    baseIceSpeed: LEVEL_1_BASE_SPEED,
+    currentSpeed: LEVEL_1_BASE_SPEED,
     passes: 0,
     totalPassesInShift: 0,
     oneTimerArmed: false,
@@ -439,6 +460,11 @@
     graceTimer: 0,
     shakeTimer: 0,
     clock: 0,
+    lockedNetNudgeCount: 0,
+
+    // Distance-driven spawner cursors (strictly tied to ice Z meters, NEVER wall-clock timers)
+    nextWaveZ: 34,
+    nextNetZ: 56,
 
     // Camera 35-deg Broadcast State
     camX: 0,
@@ -450,9 +476,10 @@
       fromZ: 0,
       toSkaterId: null,
       progress: 0,
-      duration: 0.26,
+      duration: 0.28,
       intercepted: false,
       leadColor: 'emerald',
+      tappedRing: false,
       transferCount: 0
     },
 
@@ -482,11 +509,9 @@
     return ARENAS[idx];
   }
 
+  // Exact v1.2 Speed Formula: 50% slower L1 (12.55) + 15% compounding per level
   function calcBaseSpeedForLevel(lvl) {
-    const arena = getArenaForLevel(lvl);
-    const extraTier = Math.max(0, lvl - 5) * 3.5;
-    const speedUpgradeBonus = (profile.upgrades.speed - 1) * 1.1;
-    return arena.baseSpeed + extraTier + speedUpgradeBonus;
+    return +(LEVEL_1_BASE_SPEED * Math.pow(LEVEL_SPEED_GROWTH, Math.max(0, lvl - 1))).toFixed(4);
   }
 
   function initAmbientSnow() {
@@ -515,7 +540,6 @@
         stridePhase: 0,
         tilt: 0,
         isDecoy: false,
-        weaveOffset: 0,
         leadRingColor: 'emerald',
         leadZ: z0 + 5
       },
@@ -525,13 +549,12 @@
         lane: 0,
         x: LANE_X[0],
         targetX: LANE_X[0],
-        z: z0 + 13,
+        z: z0 + 14.5,
         stridePhase: 2.1,
         tilt: 0,
         isDecoy: false,
-        weaveOffset: 0,
         leadRingColor: 'emerald',
-        leadZ: z0 + 18.5
+        leadZ: z0 + 19.5
       },
       {
         id: 's2',
@@ -539,13 +562,12 @@
         lane: 2,
         x: LANE_X[2],
         targetX: LANE_X[2],
-        z: z0 + 17,
+        z: z0 + 19.5,
         stridePhase: 4.2,
         tilt: 0,
         isDecoy: false,
-        weaveOffset: Math.PI,
         leadRingColor: 'emerald',
-        leadZ: z0 + 22.5
+        leadZ: z0 + 24.5
       }
     ];
 
@@ -556,13 +578,12 @@
         lane: 1,
         x: 3.9,
         targetX: 3.9,
-        z: z0 + 23,
+        z: z0 + 25.5,
         stridePhase: 1.1,
         tilt: 0,
         isDecoy: true,
-        weaveOffset: Math.PI * 0.5,
         leadRingColor: 'crimson',
-        leadZ: z0 + 28
+        leadZ: z0 + 30.2
       });
     }
 
@@ -576,26 +597,50 @@
     return state.skaters.find((s) => s.id === state.controlledSkaterId) || state.skaters[0];
   }
 
+  // Strictly distance-tied obstacle, defender, and oncoming net spawner
   function populateWaveAhead(fromZ) {
     state.defenders = state.defenders.filter((d) => d.z > fromZ - 12);
     state.obstacles = state.obstacles.filter((o) => o.z > fromZ - 12);
-    state.nets = state.nets.filter((n) => n.z > fromZ - 15);
+    state.nets = state.nets.filter((n) => n.z > fromZ - 14);
 
     const arena = getArenaForLevel(state.level);
-    let cursorZ = Math.max(
-      fromZ + 32,
-      state.defenders.reduce((m, d) => Math.max(m, d.z), 0) + 22,
-      state.obstacles.reduce((m, o) => Math.max(m, o.z), 0) + 22
-    );
+    if (state.nextWaveZ < fromZ + 30) {
+      state.nextWaveZ = fromZ + 30;
+    }
+    if (state.nextNetZ < fromZ + 38) {
+      state.nextNetZ = fromZ + 52;
+    }
 
-    while (cursorZ < fromZ + 165) {
+    // Distance-based oncoming nets along the continuous multi-rink sheet
+    while (state.nextNetZ < fromZ + 150) {
+      const netZ = state.nextNetZ;
+      state.nets.push({
+        id: 'net_' + Math.round(netZ * 10) + '_' + Math.random().toString(36).slice(2, 6),
+        x: 0,
+        z: netZ,
+        scored: false,
+        rippleTimer: 0,
+        goalLightTimer: 0
+      });
+      state.nextNetZ += 58;
+    }
+
+    // Distance-based defenders & obstacles preserving spacious gaps around nets
+    const gapZ = Math.max(22, 29 - state.level * 1.1);
+    while (state.nextWaveZ < fromZ + 155) {
+      const spawnZ = state.nextWaveZ;
+      state.nextWaveZ += gapZ;
+
+      const nearAnyNet = state.nets.some((n) => Math.abs(n.z - spawnZ) < 10);
+      if (nearAnyNet) continue;
+
       const blockedLane = Math.floor(Math.random() * 3);
       if (Math.random() < 0.58) {
         state.defenders.push({
           id: 'def_' + Math.random().toString(36).slice(2, 8),
           lane: blockedLane,
           x: LANE_X[blockedLane],
-          z: cursorZ,
+          z: spawnZ,
           stickReach: 2.35,
           stickDir: blockedLane === 0 ? 1 : (blockedLane === 2 ? -1 : (Math.random() < 0.5 ? 1 : -1)),
           stridePhase: Math.random() * 6.28
@@ -605,28 +650,28 @@
           id: 'obs_' + Math.random().toString(36).slice(2, 8),
           lane: blockedLane,
           x: LANE_X[blockedLane],
-          z: cursorZ,
+          z: spawnZ,
           kind: arena.obstacleType,
           radius: 1.55
         });
       }
-      cursorZ += Math.max(19, 28 - state.level * 1.3);
     }
   }
 
   function ensureGoalNetAhead() {
     const carrier = getControlledSkater();
     if (!carrier) return null;
-    const existing = state.nets.find((n) => !n.scored && n.z > carrier.z + 10 && n.z < carrier.z + 82);
+    const existing = state.nets
+      .filter((n) => !n.scored && n.z > carrier.z + 12 && n.z < carrier.z + 62)
+      .sort((a, b) => a.z - b.z)[0];
     if (existing) return existing;
 
-    const netZ = carrier.z + 44;
-    // Clear obstacles/defenders right in front of the crease so the goal net is pristine
+    const netZ = carrier.z + 36;
     state.obstacles = state.obstacles.filter((o) => Math.abs(o.z - netZ) > 9);
     state.defenders = state.defenders.filter((d) => Math.abs(d.z - netZ) > 8);
 
     const net = {
-      id: 'net_' + Date.now(),
+      id: 'net_armed_' + Date.now(),
       x: 0,
       z: netZ,
       scored: false,
@@ -666,11 +711,11 @@
     const sideOffset = Math.sin(skater.stridePhase) >= 0 ? 0.38 : -0.38;
     state.bladeTrails.push({
       x1: skater.x + sideOffset,
-      z1: skater.z - 0.6,
+      z1: skater.z - 0.55,
       x2: skater.x + sideOffset * 0.7,
-      z2: skater.z + 0.5,
-      alpha: isCut ? 0.92 : 0.52,
-      width: isCut ? 2.6 : 1.5,
+      z2: skater.z + 0.45,
+      alpha: isCut ? 0.94 : 0.54,
+      width: isCut ? 2.7 : 1.5,
       isCarrier: skater.id === state.controlledSkaterId
     });
     if (state.bladeTrails.length > 260) {
@@ -699,7 +744,7 @@
     if (teammate.isDecoy) return 'crimson';
 
     const visionBonus = (profile.upgrades.vision - 1) * 0.14;
-    const leadZ = teammate.z + 4.8 + visionBonus * 2;
+    const leadZ = teammate.z + 4.8 + visionBonus * 1.8;
     teammate.leadZ = leadZ;
 
     let minBlockerDist = 999;
@@ -734,83 +779,100 @@
 
     const supportSkaters = state.skaters.filter((s) => s.id !== carrier.id && !s.isDecoy);
     const decoySkaters = state.skaters.filter((s) => s.isDecoy);
-
-    // Assign open lanes so teammates always frame the carrier cleanly
     const availableLanes = [0, 1, 2].filter((l) => l !== carrier.lane);
 
+    // Distance-coupled weave phase so slower L1 and faster L5 feel organically paced
+    const distPhase = carrier.z * 0.085;
+
     supportSkaters.forEach((mate, idx) => {
-      const desiredZ = carrier.z + (idx === 0 ? 13.5 : 18.5);
-      mate.z += (desiredZ - mate.z) * Math.min(1, dt * 6.5);
+      const desiredZ = carrier.z + (idx === 0 ? 14.5 : 20.0);
+      mate.z += (desiredZ - mate.z) * Math.min(1, dt * 5.8);
 
       if (state.level <= 2) {
-        // Levels 1-2: Steady parallel support lanes
         const targetLane = availableLanes[idx % availableLanes.length];
         mate.lane = targetLane;
         mate.targetX = LANE_X[targetLane];
       } else if (state.level <= 4) {
-        // Levels 3-4: Diagonal slot cuts across lanes
-        const wave = Math.sin(state.clock * 1.45 + idx * 2.4);
+        const wave = Math.sin(distPhase + idx * 2.45);
         mate.targetX = wave * 7.6;
         mate.lane = mate.targetX < -3.2 ? 0 : (mate.targetX > 3.2 ? 2 : 1);
       } else {
-        // Levels 5+: Criss-cross scissor switches
-        const scissor = Math.sin(state.clock * 2.05 + (idx === 0 ? 0 : Math.PI));
+        const scissor = Math.sin(distPhase * 1.28 + (idx === 0 ? 0 : Math.PI));
         mate.targetX = scissor * 8.1;
         mate.lane = mate.targetX < -3.2 ? 0 : (mate.targetX > 3.2 ? 2 : 1);
       }
 
       const prevX = mate.x;
-      mate.x += (mate.targetX - mate.x) * Math.min(1, dt * 5.2);
+      mate.x += (mate.targetX - mate.x) * Math.min(1, dt * 4.8);
       mate.tilt = (mate.x - prevX) * 2.2;
-      mate.stridePhase += dt * (9.5 + state.level * 0.5);
+      mate.stridePhase += dt * (0.58 * state.currentSpeed);
       mate.leadRingColor = evaluateLeadWindow(carrier, mate);
     });
 
     decoySkaters.forEach((decoy) => {
-      const desiredZ = carrier.z + 22.5;
-      decoy.z += (desiredZ - decoy.z) * Math.min(1, dt * 6.0);
-      decoy.targetX = Math.cos(state.clock * 1.7) * 6.8;
-      decoy.x += (decoy.targetX - decoy.x) * Math.min(1, dt * 4.8);
-      decoy.stridePhase += dt * 10.2;
+      const desiredZ = carrier.z + 24.5;
+      decoy.z += (desiredZ - decoy.z) * Math.min(1, dt * 5.5);
+      decoy.targetX = Math.cos(distPhase * 1.15) * 6.8;
+      decoy.x += (decoy.targetX - decoy.x) * Math.min(1, dt * 4.4);
+      decoy.stridePhase += dt * (0.62 * state.currentSpeed);
       decoy.leadZ = decoy.z + 4.6;
       decoy.leadRingColor = 'crimson';
     });
   }
 
-  function pickTargetReceiver(preferredSkaterId) {
+  function pickTargetReceiver(preferredReceiverOrId) {
     const carrier = getControlledSkater();
     const candidates = state.skaters.filter((s) => s.id !== carrier.id);
     if (!candidates.length) return null;
 
-    if (preferredSkaterId) {
-      const exact = candidates.find((c) => c.id === preferredSkaterId);
+    if (preferredReceiverOrId) {
+      if (typeof preferredReceiverOrId === 'object' && preferredReceiverOrId.id) {
+        const byObj = candidates.find((c) => c.id === preferredReceiverOrId.id);
+        if (byObj) return byObj;
+      }
+      const exact = candidates.find((c) => c.id === preferredReceiverOrId);
       if (exact) return exact;
     }
 
     const rank = { emerald: 3, amber: 2, crimson: 1 };
-    const sorted = candidates.slice().sort((a, b) => {
+    return candidates.slice().sort((a, b) => {
       const rDiff = (rank[b.leadRingColor] || 0) - (rank[a.leadRingColor] || 0);
       if (rDiff !== 0) return rDiff;
       return a.z - b.z;
-    });
-    return sorted[0];
+    })[0];
   }
 
   /* ==========================================================================
-     GAMEPLAY ACTIONS: LANE CUTS, PASS & WHIP-PAN, ONE-TIMER SHOOT, TURNOVER
+     GAMEPLAY ACTIONS: SWIPE LANE CUTS, DIRECT-TAP PASS & NET-TAP ONE-TIMER
      ========================================================================== */
   function showIceCallout(title, subtitle, variant, durationMs) {
     const box = document.getElementById('ice-callout');
     const badge = document.getElementById('callout-badge');
     const sub = document.getElementById('callout-sub');
-    badge.textContent = title;
+    badge.textContent = toNaturalTalk(title);
     badge.className = 'callout-badge' + (variant ? ' ' + variant : '');
-    sub.textContent = subtitle || '';
+    sub.textContent = toNaturalTalk(subtitle || '');
     box.classList.remove('hidden');
     clearTimeout(showIceCallout._timer);
     showIceCallout._timer = setTimeout(() => {
       box.classList.add('hidden');
     }, durationMs || 1650);
+  }
+
+  function nudgeLockedShot() {
+    state.lockedNetNudgeCount += 1;
+    const passPill = document.getElementById('hud-passes');
+    if (passPill) {
+      passPill.classList.remove('nudge-pulse');
+      void passPill.offsetWidth;
+      passPill.classList.add('nudge-pulse');
+      clearTimeout(nudgeLockedShot._t);
+      nudgeLockedShot._t = setTimeout(() => {
+        passPill.classList.remove('nudge-pulse');
+      }, 500);
+    }
+    sfxNudge();
+    showIceCallout('3 PASSES TO UNLOCK SHOT', `Current Chain: ${state.passes}/3 — Tap open teammates first!`, 'amber', 1350);
   }
 
   function moveLane(delta) {
@@ -822,9 +884,8 @@
 
     carrier.lane = nextLane;
     carrier.targetX = LANE_X[nextLane];
-    carrier.tilt = delta * 0.42;
+    carrier.tilt = delta * 0.45;
 
-    // Directional snow-spray burst opposite the cut direction
     spawnSnowBurst(carrier.x, carrier.z, -delta, 22);
     recordBladeCarve(carrier, true);
     sfxCut();
@@ -836,7 +897,8 @@
     state.oneTimerArmed = false;
     state.whipPan.active = false;
     state.shotInFlight = null;
-    state.stumbleTimer = 1.0;
+    const recoveryBoost = 1 + (profile.upgrades.speed - 1) * 0.08;
+    state.stumbleTimer = +(1.0 / recoveryBoost).toFixed(3);
     state.graceTimer = 1.45;
     state.shakeTimer = 0.35;
     state.pucks = Math.max(0, state.pucks - 1);
@@ -868,11 +930,10 @@
     wp.active = false;
 
     if (wp.intercepted || !receiver) {
-      triggerTurnover('Pass intercepted in Crimson lane!');
+      triggerTurnover('Pass intercepted in Crimson stick lane!');
       return;
     }
 
-    // Seamless receiver lock as newly controlled skater!
     state.controlledSkaterId = receiver.id;
     wp.transferCount += 1;
     state.passes = Math.min(3, state.passes + 1);
@@ -880,10 +941,37 @@
     profile.lifetimePasses += 1;
     unlockTrophy('first_pass');
 
+    // Advance trailing support skaters into visible up-ice wing formation for crisp tic-tac-toe chains
+    const openSupportLanes = [0, 1, 2].filter((l) => l !== receiver.lane);
+    const supportMates = state.skaters.filter((s) => s.id !== receiver.id && !s.isDecoy);
+    supportMates.forEach((mate, idx) => {
+      const minSupportZ = receiver.z + (idx === 0 ? 12.5 : 18.0);
+      if (mate.z < minSupportZ) {
+        mate.z = minSupportZ;
+        if (state.level <= 2) {
+          const nextLane = openSupportLanes[idx % openSupportLanes.length];
+          mate.lane = nextLane;
+          mate.targetX = LANE_X[nextLane];
+          mate.x = LANE_X[nextLane];
+        }
+      }
+      mate.leadRingColor = evaluateLeadWindow(receiver, mate);
+    });
+    state.skaters.filter((s) => s.isDecoy).forEach((decoy) => {
+      if (decoy.z < receiver.z + 22.0) decoy.z = receiver.z + 22.5;
+      decoy.leadZ = decoy.z + 4.6;
+      decoy.leadRingColor = 'crimson';
+    });
+
+    let tapeToTapeBonus = false;
     if (wp.leadColor === 'amber') {
       profile.storyPoints += 5;
       state.shiftSpEarned += 5;
       unlockTrophy('thread_needle');
+    } else if (wp.tappedRing && wp.leadColor === 'emerald' && state.level >= 3) {
+      tapeToTapeBonus = true;
+      profile.storyPoints += 5;
+      state.shiftSpEarned += 5;
     }
 
     spawnSnowBurst(receiver.x, receiver.z, receiver.x >= wp.fromX ? 1 : -1, 16, 'rgba(167, 243, 208, 0.92)');
@@ -893,32 +981,42 @@
       state.oneTimerArmed = true;
       ensureGoalNetAhead();
       sfxArmed();
-      showIceCallout('ONE-TIMER ARMED!', 'Target corners lit — tap 🎯 Shoot!', '', 2200);
+      showIceCallout('ONE-TIMER ARMED!', 'Tap glowing target corners on the oncoming net!', '', 2300);
       speakGuide('armed');
+    } else if (tapeToTapeBonus || (wp.tappedRing && wp.leadColor === 'emerald')) {
+      showIceCallout('TAPE TO TAPE!', `Lead Ring bullseye (${state.passes}/3)!`, '', 1150);
+      if (state.passes === 1) speakGuide('pass1');
     } else if (state.passes === 1) {
-      showIceCallout(`TAPE-TO-TAPE! (${state.passes}/3)`, 'Camera locked onto receiver!', '', 1100);
+      showIceCallout(`TAPE TO TAPE! (${state.passes}/3)`, 'Camera locked onto receiver!', '', 1100);
       speakGuide('pass1');
     } else {
-      showIceCallout(`PASS CHAIN: ${state.passes}/3`, 'One more pass arms the One-Timer!', '', 1100);
+      showIceCallout(`PASS CHAIN: ${state.passes}/3`, 'One more pass unlocks the net!', '', 1100);
     }
 
     saveProfile();
     syncHudValues();
   }
 
-  function triggerPass(preferredReceiverId, forceResultColor) {
+  function triggerPass(preferredReceiverOrId, forceResultColor, meta) {
     if (state.mode !== 'playing' || state.countdown.active || state.whipPan.active || state.shotInFlight) {
       return false;
     }
     if (state.stumbleTimer > 0) return false;
 
     const carrier = getControlledSkater();
-    const receiver = pickTargetReceiver(preferredReceiverId);
+    const receiver = pickTargetReceiver(preferredReceiverOrId);
     if (!carrier || !receiver) return false;
 
-    const leadColor = forceResultColor || receiver.leadRingColor || evaluateLeadWindow(carrier, receiver);
-    const zipFactor = 1 + (profile.upgrades.passZip - 1) * 0.14;
-    const duration = Math.max(0.14, 0.28 / zipFactor);
+    const liveLeadColor = evaluateLeadWindow(carrier, receiver);
+    receiver.leadRingColor = liveLeadColor;
+    const leadColor = forceResultColor || liveLeadColor;
+
+    // Proportional pass velocity & whip-pan duration scaled cleanly with level speed + Pass Zip upgrade
+    const dist3D = Math.hypot(receiver.x - carrier.x, (receiver.leadZ || (receiver.z + 4.8)) - carrier.z);
+    const levelPuckVel = 48 * Math.pow(1.10, Math.max(0, state.level - 1)) * (1 + (profile.upgrades.passZip - 1) * 0.14);
+    const duration = window.__TEST_MODE__
+      ? 0.15
+      : Math.max(0.18, Math.min(0.38, dist3D / levelPuckVel));
 
     state.whipPan.active = true;
     state.whipPan.fromX = carrier.x;
@@ -927,6 +1025,7 @@
     state.whipPan.progress = 0;
     state.whipPan.duration = duration;
     state.whipPan.leadColor = leadColor;
+    state.whipPan.tappedRing = !!(meta && meta.tappedRing);
     state.whipPan.intercepted = (leadColor === 'crimson');
 
     spawnSnowBurst(carrier.x, carrier.z, receiver.x > carrier.x ? -1 : 1, 12);
@@ -944,7 +1043,7 @@
     overlay.classList.remove('hidden');
 
     const steps = ['3', '2', '1', 'PUCK DROP!'];
-    const beatMs = window.__TEST_MODE__ ? 95 : 620;
+    const beatMs = window.__TEST_MODE__ ? 90 : 600;
     let idx = 0;
 
     function runStep() {
@@ -1020,10 +1119,9 @@
       state.pucks = 3;
       state.baseIceSpeed = calcBaseSpeedForLevel(state.level);
 
-      // Refresh squad for new arena (adds covered decoy at Level 5+)
       const carrier = getControlledSkater();
       buildSkaterSquad(carrier ? carrier.z : 0);
-      showIceCallout(`LEVEL UP! +${spReward + levelBonus} SP`, `Entering ${getArenaForLevel(state.level).name}!`, 'gold', 2400);
+      showIceCallout(`LEVEL UP! +${spReward + levelBonus} SP`, `Entering ${getArenaForLevel(state.level).name} (+15% Speed)!`, 'gold', 2400);
       speakGuide('levelup');
     } else {
       showIceCallout(`GOAL! +${spReward} SP`, `Goals: ${state.goals}/3 — Horn & Net Ripple!`, 'gold', 1900);
@@ -1035,20 +1133,22 @@
     startPostGoalCountdown(didLevelUp);
   }
 
-  function triggerShoot() {
+  function triggerShoot(preferredCornerX, specificNet) {
     if (state.mode !== 'playing' || state.countdown.active || state.whipPan.active || state.shotInFlight) {
       return false;
     }
-    // Mandatory 3-Pass Rule!
     if (state.passes < 3 || !state.oneTimerArmed) {
+      nudgeLockedShot();
       return false;
     }
 
     const carrier = getControlledSkater();
-    const net = ensureGoalNetAhead();
+    const net = specificNet || ensureGoalNetAhead();
     if (!carrier || !net) return false;
 
-    const cornerX = carrier.x <= 0 ? 1.95 : -1.95; // Top shelf corner!
+    const cornerX = typeof preferredCornerX === 'number'
+      ? preferredCornerX
+      : (carrier.x <= 0 ? 1.95 : -1.95);
     const shotSpeedBonus = 1 + (profile.upgrades.shotPower - 1) * 0.16;
 
     state.shotInFlight = {
@@ -1059,7 +1159,7 @@
       toZ: net.z,
       net: net,
       progress: 0,
-      duration: Math.max(0.12, 0.22 / shotSpeedBonus)
+      duration: window.__TEST_MODE__ ? 0.12 : Math.max(0.14, 0.24 / shotSpeedBonus)
     };
 
     spawnSnowBurst(carrier.x, carrier.z, carrier.x >= 0 ? -1 : 1, 22, 'rgba(253, 224, 71, 0.92)');
@@ -1068,7 +1168,7 @@
   }
 
   /* ==========================================================================
-     SHIFT LIFECYCLE & HUD SYNC
+     SHIFT LIFECYCLE & HUD SYNC (0 BOTTOM GAMEPLAY BUTTONS)
      ========================================================================== */
   function syncHudValues() {
     const arena = getArenaForLevel(state.level);
@@ -1076,7 +1176,7 @@
 
     const passEl = document.getElementById('hud-passes');
     if (state.oneTimerArmed && state.passes >= 3) {
-      passEl.textContent = 'PASSES: 3/3 • ARMED!';
+      passEl.textContent = 'PASSES: 3/3 • TAP NET!';
       passEl.setAttribute('data-armed', 'true');
     } else {
       passEl.textContent = `PASSES: ${state.passes}/3`;
@@ -1092,15 +1192,6 @@
     document.getElementById('hud-sp-val').textContent = String(profile.storyPoints);
     const hubSp = document.getElementById('hub-sp-count');
     if (hubSp) hubSp.textContent = String(profile.storyPoints);
-
-    const shootBtn = document.getElementById('btn-shoot');
-    if (state.oneTimerArmed && state.passes >= 3) {
-      shootBtn.disabled = false;
-      shootBtn.classList.add('armed');
-    } else {
-      shootBtn.disabled = true;
-      shootBtn.classList.remove('armed');
-    }
   }
 
   function startShift(levelOverride) {
@@ -1123,6 +1214,8 @@
     state.defenders = [];
     state.obstacles = [];
     state.nets = [];
+    state.nextWaveZ = 30;
+    state.nextNetZ = 48;
 
     buildSkaterSquad(0);
     populateWaveAhead(0);
@@ -1138,7 +1231,12 @@
     document.getElementById('countdown-overlay').classList.add('hidden');
 
     document.getElementById('hud-top').classList.remove('hidden');
-    document.getElementById('thumb-controls').classList.remove('hidden');
+
+    if (state.level === 1) {
+      showLevel1MicroHint();
+    } else {
+      hideMicroHint();
+    }
 
     syncHudValues();
     speakGuide('start');
@@ -1147,9 +1245,9 @@
   function endShift() {
     state.mode = 'shift_over';
     clearSpeechTimers();
+    hideMicroHint();
     speechBubbleEl.classList.add('hidden');
     replayOrbEl.classList.add('hidden');
-    document.getElementById('thumb-controls').classList.add('hidden');
 
     document.getElementById('sum-arena').textContent = `L${state.level} • ${getArenaForLevel(state.level).shortName}`;
     document.getElementById('sum-goals').textContent = `${state.goals} / 3`;
@@ -1162,10 +1260,10 @@
   function openEntryGate() {
     state.mode = 'gate';
     clearSpeechTimers();
+    hideMicroHint();
     speechBubbleEl.classList.add('hidden');
     replayOrbEl.classList.add('hidden');
     document.getElementById('hud-top').classList.add('hidden');
-    document.getElementById('thumb-controls').classList.add('hidden');
     document.getElementById('locker-hub').classList.add('hidden');
     document.getElementById('shift-modal').classList.add('hidden');
     document.getElementById('countdown-overlay').classList.add('hidden');
@@ -1205,10 +1303,8 @@
           <rect x="20" y="8" width="440" height="114" rx="8" fill="#291d12" stroke="#78350f" stroke-width="3"/>
           <line x1="160" y1="8" x2="160" y2="122" stroke="#78350f" stroke-width="3"/>
           <line x1="320" y1="8" x2="320" y2="122" stroke="#78350f" stroke-width="3"/>
-          <!-- Hanging Synapz Rush Jersey -->
           <path d="M210,28 L270,28 L292,52 L276,62 L266,48 L266,104 L214,104 L214,48 L204,62 L188,52 Z" fill="${jTheme.main}" stroke="${jTheme.stripe}" stroke-width="2.5"/>
           <text x="240" y="76" text-anchor="middle" fill="${jTheme.num}" font-size="22" font-weight="900">97</text>
-          <!-- Helmet & Skates -->
           <circle cx="92" cy="52" r="20" fill="#0284c7" stroke="#bae6fd" stroke-width="2"/>
           <rect x="78" y="48" width="28" height="10" rx="4" fill="#e0f2fe" opacity="0.8"/>
           <path d="M372,92 L412,92 L416,104 L368,104 Z" fill="#cbd5e1"/>
@@ -1227,7 +1323,7 @@
           <circle cx="380" cy="68" r="9" fill="none" stroke="#fde047" stroke-width="2.5"/>
           <path d="M104,84 Q170,40 230,48" fill="none" stroke="#7dd3fc" stroke-width="2.5" stroke-dasharray="5,4"/>
           <path d="M250,48 Q315,78 370,68" fill="none" stroke="#fde047" stroke-width="2.5" stroke-dasharray="5,4"/>
-          <text x="240" y="110" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="800">3-PASS WEAVE → HIGH-SLOT ONE-TIMER</text>
+          <text x="240" y="110" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="800">TAP 3 TEAMMATES → TAP GLOWING NET</text>
         </svg>`;
     }
     if (roomId === 'proshop') {
@@ -1236,11 +1332,9 @@
         <svg viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg">
           <rect width="480" height="130" fill="#0f172a"/>
           <rect x="20" y="84" width="440" height="36" rx="4" fill="#334155"/>
-          <!-- Skate Grinder Sparks -->
           <circle cx="130" cy="62" r="22" fill="#475569" stroke="#38bdf8" stroke-width="3"/>
           <line x1="150" y1="54" x2="184" y2="36" stroke="#fde047" stroke-width="2.5"/>
           <line x1="152" y1="62" x2="192" y2="58" stroke="#fb923c" stroke-width="2.5"/>
-          <!-- Custom Stick Blade -->
           <path d="M250,24 L335,72 L398,70 L398,82 L328,84 L242,32 Z" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
           <rect x="348" y="70" width="38" height="13" fill="${tColor}"/>
         </svg>`;
@@ -1249,7 +1343,6 @@
       <svg viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg">
         <rect width="480" height="130" fill="#0b1120"/>
         <rect x="24" y="12" width="432" height="106" rx="10" fill="#111c38" stroke="#facc15" stroke-width="2"/>
-        <!-- Synapz Championship Cup -->
         <path d="M216,32 L264,32 L256,64 Q240,78 224,64 Z" fill="#facc15"/>
         <rect x="233" y="68" width="14" height="18" fill="#eab308"/>
         <rect x="218" y="86" width="44" height="14" rx="3" fill="#78350f" stroke="#fde047"/>
@@ -1286,7 +1379,7 @@
         ${bannerHtml}
         <div>
           <h3 class="room-heading">1. Tunnel Entry Gate</h3>
-          <p class="room-sub">Choose your Peer Guide voice band and step straight onto <strong>L${curArena.level}: ${curArena.name}</strong>.</p>
+          <p class="room-sub">Choose your Peer Guide voice band and step onto <strong>L${curArena.level}: ${curArena.name}</strong>.</p>
         </div>
         <div class="guide-selector-row">${guideButtons}</div>
         <div class="hub-item-card">
@@ -1299,8 +1392,8 @@
       `;
     } else if (state.activeHubRoom === 'stall') {
       const specs = [
-        { key: 'speed', label: '⚡ Skating Speed', desc: 'Snappier lane cuts & faster base stride' },
-        { key: 'passZip', label: '🏒 Pass Zip', desc: 'Higher puck velocity & tighter camera whip-pan' },
+        { key: 'speed', label: '⚡ Skating Edge Agility', desc: 'Snappier swipe lane cuts & faster stumble recovery' },
+        { key: 'passZip', label: '🏒 Pass Zip', desc: 'Higher puck velocity & crisper camera whip-pan' },
         { key: 'vision', label: '👁️ Ice Vision Range', desc: 'Longer Lead Ring sightlines & wider green seams' },
         { key: 'shotPower', label: '🎯 Shot Power', desc: 'Blistering one-timer speed & +5 bonus SP per goal' }
       ];
@@ -1327,22 +1420,21 @@
         ${bannerHtml}
         <div>
           <h3 class="room-heading">2. Player Locker Stall</h3>
-          <p class="room-sub">Spend Story Points earned from goals and thread-the-needle passes.</p>
+          <p class="room-sub">Spend Story Points earned from goals and Lead Ring bullseyes.</p>
         </div>
         <div class="hub-grid-list">${rows}</div>
       `;
     } else if (state.activeHubRoom === 'chalkboard') {
       const cards = ARENAS.map((a) => {
-        const unlocked = a.level <= Math.max(5, profile.unlockedLevel + 4); // Playable anytime in playtest + tracked progression
         const isSelected = profile.selectedLevel === a.level;
         const cleared = profile.unlockedLevel > a.level;
         return `
           <div class="hub-item-card">
             <div class="hub-item-info">
               <div class="hub-item-title">L${a.level} • ${a.name} ${cleared ? '⭐' : ''}</div>
-              <div class="hub-item-meta">${a.weaveLabel} • Base ${a.baseSpeed} km/h</div>
+              <div class="hub-item-meta">${a.weaveLabel} • Speed ${a.baseSpeed} (+15%/lvl)</div>
             </div>
-            <button type="button" class="hub-action-pill ${isSelected ? 'selected' : ''}" data-pick-arena="${a.level}" ${!unlocked ? 'disabled' : ''}>
+            <button type="button" class="hub-action-pill ${isSelected ? 'selected' : ''}" data-pick-arena="${a.level}">
               ${isSelected ? '🏒 Play Now' : 'Select & Play'}
             </button>
           </div>
@@ -1353,7 +1445,7 @@
         ${bannerHtml}
         <div>
           <h3 class="room-heading">3. Coach Chalkboard Story Map</h3>
-          <p class="room-sub">Select any of the 5 themed obstacle arenas to test progressive teammate weaving.</p>
+          <p class="room-sub">Select any of the 5 themed obstacle arenas (+15% compounding ice pace).</p>
         </div>
         <div class="hub-grid-list">${cards}</div>
       `;
@@ -1392,7 +1484,7 @@
       `;
     } else {
       const milestones = [
-        { id: 'first_pass', name: '🏒 First Tape-to-Tape', desc: 'Complete a clean Lead Ring whip-pan transfer' },
+        { id: 'first_pass', name: '🏒 First Tape-to-Tape', desc: 'Tap a teammate to complete a clean whip-pan transfer' },
         { id: 'thread_needle', name: '⚡ Thread the Needle', desc: 'Complete a tight Amber window pass' },
         { id: 'hat_trick', name: '🎩 3-Goal Arena Clear', desc: 'Score 3/3 goals to clear an Arena Level' },
         { id: 'synapz_cup', name: '🏆 Pro Championship Cup', desc: 'Conquer Level 5 Pro Championship Arena' }
@@ -1425,10 +1517,10 @@
   function openLockerHub(roomId) {
     state.mode = 'hub';
     clearSpeechTimers();
+    hideMicroHint();
     speechBubbleEl.classList.add('hidden');
     replayOrbEl.classList.add('hidden');
     document.getElementById('hud-top').classList.add('hidden');
-    document.getElementById('thumb-controls').classList.add('hidden');
     document.getElementById('entry-gate').classList.add('hidden');
     document.getElementById('shift-modal').classList.add('hidden');
     document.getElementById('locker-hub').classList.remove('hidden');
@@ -1468,20 +1560,19 @@
     try {
       list = JSON.parse(localStorage.getItem(STORAGE_KEYS.RED_FLAGS) || '[]');
       if (!Array.isArray(list)) list = [];
-    } catch (e) {
+    } catch (_) {
       list = [];
     }
     list.unshift(entry);
     localStorage.setItem(STORAGE_KEYS.RED_FLAGS, JSON.stringify(list.slice(0, 50)));
 
-    // STRICT GUARD: Never dispatch network/mailto calls when __TEST_MODE__ is active (or ever unsolicited)
     document.getElementById('redflag-status').textContent = window.__TEST_MODE__
       ? 'Saved locally to synapz_rush_red_flags (TEST_MODE outbound suppressed).'
       : 'Saved locally to synapz_rush_red_flags!';
   }
 
   /* ==========================================================================
-     35-DEGREE BROADCAST 3D -> 2D CAMERA PROJECTION & RENDERER
+     35-DEGREE BROADCAST CAMERA (ACTIVE SKATER ANCHORED ~25%+ CLOSER TO BOTTOM)
      ========================================================================== */
   let viewW = window.innerWidth;
   let viewH = window.innerHeight;
@@ -1510,6 +1601,8 @@
   const COS_P = Math.cos(PITCH_RAD);
   const SIN_P = Math.sin(PITCH_RAD);
 
+  // v1.2 Framing: Shifts active controlled skater Y anchor from ~0.566*H (v1.0) down to ~0.735*H
+  // (reducing distance from bottom edge from 43.4% to ~26.5% -> >25% closer to bottom edge!)
   function project3D(wx, wy, wz) {
     const camZ = state.focusZ - CAM_BACK;
     const dx = wx - state.camX;
@@ -1521,7 +1614,6 @@
 
     const cy = dy * COS_P + dz * SIN_P;
 
-    // Subtle lateral whip-pan roll
     const cosR = Math.cos(state.camRoll);
     const sinR = Math.sin(state.camRoll);
     const rx = dx * cosR - cy * sinR;
@@ -1529,11 +1621,11 @@
 
     const isLandscape = viewW > viewH;
     const focalX = isLandscape
-      ? Math.min(viewW * 0.78, viewH * 0.96)
-      : Math.min(viewW * 0.94, viewH * 0.78);
-    const focalY = isLandscape ? viewH * 0.64 : viewH * 0.62;
+      ? Math.min(viewW * 0.78, viewH * 0.98)
+      : Math.min(viewW * 0.94, viewH * 0.82);
+    const focalY = isLandscape ? viewH * 1.02 : viewH * 1.04;
     const centerX = viewW * 0.5;
-    const horizonOriginY = isLandscape ? viewH * 0.35 : viewH * 0.37;
+    const horizonOriginY = isLandscape ? viewH * 0.40 : viewH * 0.41;
 
     const scale = focalX / cz;
     return {
@@ -1544,6 +1636,198 @@
     };
   }
 
+  /* ==========================================================================
+     2D DIRECT-TOUCH HITBOX PROJECTION HELPERS (+42px TEAMMATE / +38px NET)
+     ========================================================================== */
+  function getCarrierScreenAnchor() {
+    const carrier = getControlledSkater();
+    if (!carrier) return null;
+    const pt = project3D(carrier.x, 0, carrier.z);
+    if (!pt) return null;
+    return {
+      x: pt.x,
+      y: pt.y,
+      yRatio: pt.y / viewH,
+      distFromBottomPx: viewH - pt.y,
+      viewW,
+      viewH
+    };
+  }
+
+  function getProjectedTeammateHitboxes() {
+    const carrier = getControlledSkater();
+    const out = [];
+    for (let i = 0; i < state.skaters.length; i++) {
+      const mate = state.skaters[i];
+      if (carrier && mate.id === carrier.id) continue;
+
+      const pFoot = project3D(mate.x, 0, mate.z);
+      const pHead = project3D(mate.x, 2.25, mate.z);
+      const ringZ = mate.leadZ || (mate.z + 4.8);
+      const pRing = project3D(mate.x, 0.04, ringZ);
+      if (!pFoot || !pHead || !pRing) continue;
+
+      const bodyHalfW = Math.max(14, pFoot.scale * 0.95);
+      const bodyBox = {
+        left: pFoot.x - bodyHalfW,
+        right: pFoot.x + bodyHalfW,
+        top: Math.min(pHead.y, pFoot.y - pFoot.scale * 2.2),
+        bottom: pFoot.y + pFoot.scale * 0.3,
+        centerX: pFoot.x,
+        centerY: (pHead.y + pFoot.y) * 0.5
+      };
+
+      const ringRx = Math.max(12, pRing.scale * 2.25);
+      const ringRy = Math.max(6, pRing.scale * 0.8);
+      const ringBox = {
+        left: pRing.x - ringRx,
+        right: pRing.x + ringRx,
+        top: pRing.y - ringRy,
+        bottom: pRing.y + ringRy,
+        centerX: pRing.x,
+        centerY: pRing.y,
+        rx: ringRx,
+        ry: ringRy
+      };
+
+      out.push({
+        skater: mate,
+        id: mate.id,
+        leadRingColor: mate.leadRingColor,
+        bodyBox,
+        ringBox,
+        padPx: TEAMMATE_TOUCH_PAD_PX
+      });
+    }
+    return out;
+  }
+
+  function getProjectedNetHitboxes() {
+    const carrier = getControlledSkater();
+    const out = [];
+    for (let i = 0; i < state.nets.length; i++) {
+      const net = state.nets[i];
+      if (net.scored) continue;
+      if (carrier && (net.z < carrier.z + 2 || net.z > carrier.z + 108)) continue;
+
+      const pL = project3D(-2.45, 0, net.z);
+      const pR = project3D(2.45, 0, net.z);
+      const pTopL = project3D(-2.45, 1.85, net.z);
+      const pTopR = project3D(2.45, 1.85, net.z);
+      if (!pL || !pR || !pTopL || !pTopR) continue;
+
+      const left = Math.min(pL.x, pTopL.x);
+      const right = Math.max(pR.x, pTopR.x);
+      const top = Math.min(pTopL.y, pTopR.y);
+      const bottom = Math.max(pL.y, pR.y);
+
+      out.push({
+        net,
+        id: net.id,
+        z: net.z,
+        left,
+        right,
+        top,
+        bottom,
+        centerX: (left + right) * 0.5,
+        centerY: (top + bottom) * 0.5,
+        leftCornerScreen: { x: pTopL.x + (right - left) * 0.14, y: top + (bottom - top) * 0.22 },
+        rightCornerScreen: { x: pTopR.x - (right - left) * 0.14, y: top + (bottom - top) * 0.22 },
+        padPx: NET_TOUCH_PAD_PX
+      });
+    }
+    out.sort((a, b) => a.z - b.z);
+    return out;
+  }
+
+  function hitTestTeammates(tapX, tapY) {
+    const boxes = getProjectedTeammateHitboxes();
+    let best = null;
+    let bestScore = Infinity;
+
+    for (let i = 0; i < boxes.length; i++) {
+      const b = boxes[i];
+      const pad = b.padPx;
+
+      const inBody =
+        tapX >= b.bodyBox.left - pad &&
+        tapX <= b.bodyBox.right + pad &&
+        tapY >= b.bodyBox.top - pad &&
+        tapY <= b.bodyBox.bottom + pad;
+
+      const inRing =
+        tapX >= b.ringBox.left - pad &&
+        tapX <= b.ringBox.right + pad &&
+        tapY >= b.ringBox.top - pad &&
+        tapY <= b.ringBox.bottom + pad;
+
+      if (!inBody && !inRing) continue;
+
+      const dBody = Math.hypot(tapX - b.bodyBox.centerX, tapY - b.bodyBox.centerY);
+      const dRing = Math.hypot(tapX - b.ringBox.centerX, tapY - b.ringBox.centerY);
+      const minDist = Math.min(dBody, dRing);
+
+      if (minDist < bestScore) {
+        bestScore = minDist;
+        best = {
+          skater: b.skater,
+          hitRing: dRing <= dBody + 10 && inRing
+        };
+      }
+    }
+    return best;
+  }
+
+  function hitTestNets(tapX, tapY) {
+    const nets = getProjectedNetHitboxes();
+    for (let i = 0; i < nets.length; i++) {
+      const nb = nets[i];
+      const pad = nb.padPx;
+      if (
+        tapX >= nb.left - pad &&
+        tapX <= nb.right + pad &&
+        tapY >= nb.top - pad &&
+        tapY <= nb.bottom + pad
+      ) {
+        const cornerX = tapX < nb.centerX ? -1.95 : 1.95;
+        return { net: nb.net, cornerX, box: nb };
+      }
+    }
+    return null;
+  }
+
+  function handleCanvasTap(tapX, tapY) {
+    if (state.mode !== 'playing' || state.countdown.active || state.whipPan.active || state.shotInFlight) {
+      return false;
+    }
+
+    // 1. When ONE-TIMER ARMED (3/3 passes), tapping an oncoming net (+38px forgiveness) shoots immediately!
+    if (state.passes >= 3 && state.oneTimerArmed) {
+      const netHit = hitTestNets(tapX, tapY);
+      if (netHit) {
+        return triggerShoot(netHit.cornerX, netHit.net);
+      }
+    }
+
+    // 2. Tap directly on any non-carrier teammate or their On-Ice Lead Ring (+42px forgiveness)
+    const mateHit = hitTestTeammates(tapX, tapY);
+    if (mateHit) {
+      return triggerPass(mateHit.skater, null, { tappedRing: mateHit.hitRing });
+    }
+
+    // 3. Tapping an oncoming net BEFORE 3/3 passes pulses PASSES: X/3 with visual nudge
+    const lockedNetHit = hitTestNets(tapX, tapY);
+    if (lockedNetHit && state.passes < 3) {
+      nudgeLockedShot();
+      return false;
+    }
+
+    return false;
+  }
+
+  /* ==========================================================================
+     3D SCENE RENDERING
+     ========================================================================== */
   function drawPoly3D(pts3D, fillStyle, strokeStyle, lineWidth) {
     const projected = [];
     for (let i = 0; i < pts3D.length; i++) {
@@ -1575,9 +1859,7 @@
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, viewW, horizonY + 30);
 
-    // Arena-specific upper bowl architecture
     if (arena.id === 'pond') {
-      // Pine silhouettes & warm twilight string lights
       ctx.fillStyle = '#090d1c';
       for (let x = 0; x < viewW + 30; x += 28) {
         const h = 28 + Math.sin(x * 0.17) * 10;
@@ -1591,20 +1873,19 @@
       ctx.lineWidth = 1.2;
       ctx.beginPath();
       for (let x = 0; x <= viewW; x += 16) {
-        const sag = Math.sin((x / viewW) * Math.PI) * 18;
-        if (x === 0) ctx.moveTo(x, 44 + sag);
-        else ctx.lineTo(x, 44 + sag);
+        const sag = Math.sin((x / viewW) * Math.PI) * 16;
+        if (x === 0) ctx.moveTo(x, 42 + sag);
+        else ctx.lineTo(x, 42 + sag);
       }
       ctx.stroke();
       for (let x = 24; x < viewW; x += 42) {
-        const sag = Math.sin((x / viewW) * Math.PI) * 18;
+        const sag = Math.sin((x / viewW) * Math.PI) * 16;
         ctx.fillStyle = '#fde047';
         ctx.beginPath();
-        ctx.arc(x, 46 + sag, 3.2, 0, Math.PI * 2);
+        ctx.arc(x, 44 + sag, 3.2, 0, Math.PI * 2);
         ctx.fill();
       }
     } else if (arena.id === 'pro') {
-      // Championship rafters, banners & spotlight beams
       for (let i = 0; i < 4; i++) {
         const bx = (viewW * (i + 1)) / 5;
         const sway = Math.sin(state.clock * 1.1 + i) * 22;
@@ -1620,33 +1901,31 @@
         ctx.closePath();
         ctx.fill();
 
-        // Gold Championship Banner
         ctx.fillStyle = '#1e1b4b';
         ctx.strokeStyle = '#facc15';
         ctx.lineWidth = 1.5;
-        ctx.fillRect(bx - 14, 18, 28, 36);
-        ctx.strokeRect(bx - 14, 18, 28, 36);
+        ctx.fillRect(bx - 14, 16, 28, 32);
+        ctx.strokeRect(bx - 14, 16, 28, 32);
       }
     } else {
-      // Stadium / Barn overhead LED light banks
       for (let i = 0; i < 5; i++) {
         const lx = (viewW * (i + 0.5)) / 5;
         ctx.fillStyle = 'rgba(224, 242, 254, 0.78)';
-        ctx.fillRect(lx - 18, 34, 36, 5);
-        const halo = ctx.createRadialGradient(lx, 36, 2, lx, 36, 46);
+        ctx.fillRect(lx - 18, 32, 36, 5);
+        const halo = ctx.createRadialGradient(lx, 34, 2, lx, 34, 44);
         halo.addColorStop(0, arena.lightColor);
         halo.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = halo;
         ctx.beginPath();
-        ctx.arc(lx, 36, 46, 0, Math.PI * 2);
+        ctx.arc(lx, 34, 44, 0, Math.PI * 2);
         ctx.fill();
       }
     }
   }
 
   function renderIceSheetAndRink(arena) {
-    const zNear = state.focusZ - 14;
-    const zFar = state.focusZ + 118;
+    const zNear = state.focusZ - 16;
+    const zFar = state.focusZ + 128;
     const halfW = 13.0;
 
     const pFarL = project3D(-halfW, 0, zFar);
@@ -1654,7 +1933,7 @@
     const pNearR = project3D(halfW, 0, zNear);
     const pNearL = project3D(-halfW, 0, zNear);
 
-    const horizonY = pFarL ? pFarL.y : viewH * 0.24;
+    const horizonY = pFarL ? pFarL.y : viewH * 0.20;
     renderArenaBackdrop(arena, horizonY);
 
     if (pFarL && pFarR && pNearR && pNearL) {
@@ -1673,7 +1952,7 @@
       ctx.fill();
     }
 
-    // Specular overhead arena reflections across the multi-rink ice sheet
+    // Specular overhead arena reflections
     const firstLightZ = Math.floor(zNear / 24) * 24;
     for (let lz = firstLightZ; lz < zFar; lz += 24) {
       for (let laneIdx = 0; laneIdx < 3; laneIdx++) {
@@ -1681,7 +1960,7 @@
         const c = project3D(lx, 0.01, lz);
         if (!c) continue;
         const rx = Math.max(8, c.scale * 2.8);
-        const ry = Math.max(3, c.scale * 0.95);
+        const ry = Math.max(3, c.scale * 1.05);
         const spec = ctx.createRadialGradient(c.x, c.y, 1, c.x, c.y, rx);
         spec.addColorStop(0, arena.lightColor);
         spec.addColorStop(0.5, 'rgba(255,255,255,0.22)');
@@ -1693,12 +1972,12 @@
       }
     }
 
-    // Subtle 3-lane Zamboni sheen guides
+    // Subtle 3-lane Zamboni guides
     [-3.9, 3.9].forEach((dividerX) => {
       const a = project3D(dividerX, 0.01, zNear + 4);
       const b = project3D(dividerX, 0.01, zFar);
       if (a && b) {
-        ctx.strokeStyle = 'rgba(2, 132, 199, 0.14)';
+        ctx.strokeStyle = 'rgba(2, 132, 199, 0.15)';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([8, 10]);
         ctx.beginPath();
@@ -1709,7 +1988,7 @@
       }
     });
 
-    // Multi-Rink Markings (repeating 60m zones: Blue Lines, Red Center Line, Faceoff Circles)
+    // Multi-Rink Markings (repeating 60m zones)
     const zoneLen = 60;
     const startZone = Math.floor(zNear / zoneLen) * zoneLen;
     for (let baseZ = startZone; baseZ < zFar; baseZ += zoneLen) {
@@ -1731,7 +2010,6 @@
         );
       });
 
-      // Faceoff circles
       [
         { x: 0, z: baseZ + 30, color: 'rgba(37, 99, 235, 0.42)' },
         { x: -6.8, z: baseZ + 8, color: 'rgba(220, 38, 38, 0.4)' },
@@ -1743,22 +2021,21 @@
         ctx.strokeStyle = fc.color;
         ctx.lineWidth = Math.max(1, cp.scale * 0.14);
         ctx.beginPath();
-        ctx.ellipse(cp.x, cp.y, cp.scale * 3.6, cp.scale * 1.15, 0, 0, Math.PI * 2);
+        ctx.ellipse(cp.x, cp.y, cp.scale * 3.6, cp.scale * 1.25, 0, 0, Math.PI * 2);
         ctx.stroke();
 
         ctx.fillStyle = fc.color;
         ctx.beginPath();
-        ctx.ellipse(cp.x, cp.y, Math.max(1.5, cp.scale * 0.42), Math.max(1, cp.scale * 0.16), 0, 0, Math.PI * 2);
+        ctx.ellipse(cp.x, cp.y, Math.max(1.5, cp.scale * 0.42), Math.max(1, cp.scale * 0.18), 0, 0, Math.PI * 2);
         ctx.fill();
       });
     }
 
-    // Dasher Boards + Kickplates + Plexiglass Stanchions on Left & Right
+    // Dasher Boards + Trim + Plexiglass
     const segStep = 12;
     const firstSeg = Math.floor(zNear / segStep) * segStep;
     for (let sz = zFar - segStep; sz >= firstSeg; sz -= segStep) {
       [-halfW, halfW].forEach((bx) => {
-        // Board wall
         drawPoly3D(
           [
             [bx, 0, sz],
@@ -1770,7 +2047,6 @@
           'rgba(15, 23, 42, 0.45)',
           1
         );
-        // Top cap trim
         drawPoly3D(
           [
             [bx, 1.05, sz],
@@ -1780,7 +2056,6 @@
           ],
           arena.boardTrim
         );
-        // Plexiglass above dasher board
         if (arena.id !== 'pond') {
           drawPoly3D(
             [
@@ -1817,32 +2092,30 @@
     }
   }
 
-  function renderLeadRingsAndPassPreview() {
+  function renderLeadRings() {
     const carrier = getControlledSkater();
     if (!carrier) return;
-
-    const bestTarget = pickTargetReceiver();
 
     state.skaters.forEach((mate) => {
       if (mate.id === carrier.id) return;
       const colorMap = {
-        emerald: { main: '#10b981', glow: 'rgba(16, 185, 129, 0.34)', label: 'OPEN' },
-        amber: { main: '#f59e0b', glow: 'rgba(245, 158, 11, 0.32)', label: 'TIGHT' },
-        crimson: { main: '#ef4444', glow: 'rgba(239, 68, 68, 0.32)', label: 'BLOCKED' }
+        emerald: { main: '#10b981', glow: 'rgba(16, 185, 129, 0.36)', tag: 'TAP' },
+        amber: { main: '#f59e0b', glow: 'rgba(245, 158, 11, 0.32)', tag: 'TIGHT' },
+        crimson: { main: '#ef4444', glow: 'rgba(239, 68, 68, 0.32)', tag: 'BLOCKED' }
       };
       const palette = colorMap[mate.leadRingColor] || colorMap.emerald;
       const ringZ = mate.leadZ || (mate.z + 4.8);
       const rp = project3D(mate.x, 0.04, ringZ);
       if (!rp) return;
 
-      // Sightline shimmer from carrier to best target
-      if (bestTarget && mate.id === bestTarget.id && state.mode === 'playing') {
+      // Subtle sightline ray from carrier to open options
+      if (mate.leadRingColor !== 'crimson' && state.mode === 'playing' && !state.oneTimerArmed) {
         const cp = project3D(carrier.x, 0.06, carrier.z + 0.8);
         if (cp) {
           ctx.save();
           ctx.strokeStyle = palette.main;
-          ctx.globalAlpha = 0.48;
-          ctx.lineWidth = 2;
+          ctx.globalAlpha = mate.leadRingColor === 'emerald' ? 0.38 : 0.22;
+          ctx.lineWidth = 1.8;
           ctx.setLineDash([7, 6]);
           ctx.beginPath();
           ctx.moveTo(cp.x, cp.y);
@@ -1852,18 +2125,18 @@
         }
       }
 
-      const rx = Math.max(10, rp.scale * 2.15);
-      const ry = Math.max(4.5, rp.scale * 0.72);
-      const pulse = 1 + Math.sin(state.clock * 7) * 0.08;
+      const rx = Math.max(12, rp.scale * 2.25);
+      const ry = Math.max(5.5, rp.scale * 0.82);
+      const pulse = 1 + Math.sin(state.clock * 6.5) * 0.08;
 
       ctx.save();
       ctx.fillStyle = palette.glow;
       ctx.beginPath();
-      ctx.ellipse(rp.x, rp.y, rx * pulse * 1.15, ry * pulse * 1.15, 0, 0, Math.PI * 2);
+      ctx.ellipse(rp.x, rp.y, rx * pulse * 1.16, ry * pulse * 1.16, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.strokeStyle = palette.main;
-      ctx.lineWidth = Math.max(2, rp.scale * 0.22);
+      ctx.lineWidth = Math.max(2.2, rp.scale * 0.24);
       if (mate.leadRingColor === 'amber') ctx.setLineDash([6, 4]);
       ctx.beginPath();
       ctx.ellipse(rp.x, rp.y, rx * pulse, ry * pulse, 0, 0, Math.PI * 2);
@@ -1871,7 +2144,6 @@
       ctx.setLineDash([]);
 
       if (mate.leadRingColor === 'crimson') {
-        // Draw crisp X inside crimson blocked ring
         ctx.beginPath();
         ctx.moveTo(rp.x - rx * 0.45, rp.y - ry * 0.45);
         ctx.lineTo(rp.x + rx * 0.45, rp.y + ry * 0.45);
@@ -1891,13 +2163,12 @@
     const pCenter = project3D(net.x, 0, net.z);
     if (!pCenter) return;
 
-    // Blue Goal Crease semicircle on ice
     ctx.save();
     ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
     ctx.strokeStyle = '#dc2626';
     ctx.lineWidth = Math.max(1.5, pCenter.scale * 0.14);
     ctx.beginPath();
-    ctx.ellipse(pCenter.x, pCenter.y + pCenter.scale * 0.28, pCenter.scale * 3.1, pCenter.scale * 0.95, 0, 0, Math.PI);
+    ctx.ellipse(pCenter.x, pCenter.y + pCenter.scale * 0.28, pCenter.scale * 3.1, pCenter.scale * 1.0, 0, 0, Math.PI);
     ctx.fill();
     ctx.stroke();
     ctx.restore();
@@ -1906,7 +2177,6 @@
     const goalH = 1.85;
     const ripple = net.rippleTimer > 0 ? Math.sin(state.clock * 34) * 0.28 * net.rippleTimer : 0;
 
-    // Net back mesh
     drawPoly3D(
       [
         [-halfGoalW, 0, net.z],
@@ -1928,7 +2198,6 @@
       Math.max(2.2, pCenter.scale * 0.26)
     );
 
-    // Butterfly Goalie in center leaving top corners open
     const gp = project3D(net.x, 0.65, net.z - 0.35);
     if (gp) {
       const gs = gp.scale;
@@ -1938,27 +2207,47 @@
       ctx.fillRect(gp.x - gs * 1.35, gp.y + gs * 0.15, gs * 2.7, gs * 0.38);
     }
 
-    // Illuminated Glowing Target Corners when One-Timer Armed!
+    // Illuminated Glowing Target Corners + "TAP NET!" Cue when One-Timer Armed!
     if (state.oneTimerArmed && !net.scored) {
       [-halfGoalW + 0.48, halfGoalW - 0.48].forEach((cx) => {
         const tp = project3D(cx, goalH - 0.35, net.z);
         if (!tp) return;
-        const rad = Math.max(7, tp.scale * 0.62) * (1 + Math.sin(state.clock * 9) * 0.14);
+        const rad = Math.max(8, tp.scale * 0.68) * (1 + Math.sin(state.clock * 9) * 0.15);
         ctx.save();
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.42)';
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.48)';
         ctx.beginPath();
-        ctx.arc(tp.x, tp.y, rad * 1.5, 0, Math.PI * 2);
+        ctx.arc(tp.x, tp.y, rad * 1.55, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#fde047';
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.6;
         ctx.beginPath();
         ctx.arc(tp.x, tp.y, rad, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       });
+
+      const bannerPt = project3D(0, goalH + 0.85, net.z);
+      if (bannerPt && bannerPt.scale > 3.2) {
+        ctx.save();
+        const bw = Math.max(76, bannerPt.scale * 6.8);
+        const bh = Math.max(20, bannerPt.scale * 1.75);
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.94)';
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(bannerPt.x - bw * 0.5, bannerPt.y - bh * 0.5, bw, bh, bh * 0.5);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.max(10, Math.round(bh * 0.55))}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🎯 TAP NET!', bannerPt.x, bannerPt.y + 0.5);
+        ctx.restore();
+      }
     }
 
-    // Red Goal Lamp Strobe on Goal!
     if (net.goalLightTimer > 0) {
       const lp = project3D(net.x, goalH + 0.9, net.z + 1.2);
       if (lp) {
@@ -1978,10 +2267,9 @@
     if (!p) return;
     const s = p.scale;
 
-    // Ice shadow
     ctx.fillStyle = 'rgba(15, 23, 42, 0.32)';
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y + s * 0.1, s * 1.35, s * 0.42, 0, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y + s * 0.1, s * 1.35, s * 0.44, 0, 0, Math.PI * 2);
     ctx.fill();
 
     if (obs.kind === 'crate') {
@@ -2043,7 +2331,6 @@
     const jTheme = JERSEY_THEMES[profile.custom.jersey] || JERSEY_THEMES.cyan;
     const tTheme = TAPE_THEMES[profile.custom.tape] || TAPE_THEMES.white;
 
-    // Stumble blink if recovering
     if (isCarrier && state.stumbleTimer > 0 && Math.floor(state.clock * 18) % 2 === 0) {
       ctx.save();
       ctx.globalAlpha = 0.55;
@@ -2051,25 +2338,22 @@
       ctx.save();
     }
 
-    // Specular ice reflection under skater
     ctx.fillStyle = isDefender ? 'rgba(239, 68, 68, 0.16)' : 'rgba(56, 189, 248, 0.2)';
     ctx.beginPath();
-    ctx.ellipse(pFoot.x, pFoot.y + s * 0.35, s * 0.95, s * 0.32, 0, 0, Math.PI * 2);
+    ctx.ellipse(pFoot.x, pFoot.y + s * 0.35, s * 0.95, s * 0.34, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Active carrier golden/cyan control halo on ice
     if (isCarrier) {
       ctx.strokeStyle = state.oneTimerArmed ? '#fde047' : '#38bdf8';
-      ctx.lineWidth = Math.max(2, s * 0.18);
+      ctx.lineWidth = Math.max(2.2, s * 0.2);
       ctx.beginPath();
-      ctx.ellipse(pFoot.x, pFoot.y + s * 0.05, s * 1.45, s * 0.48, 0, 0, Math.PI * 2);
+      ctx.ellipse(pFoot.x, pFoot.y + s * 0.05, s * 1.48, s * 0.52, 0, 0, Math.PI * 2);
       ctx.stroke();
     }
 
     const stride = Math.sin(skater.stridePhase || 0);
     const lean = (skater.tilt || 0) * s * 0.45 + (isCarrier && state.stumbleTimer > 0 ? Math.sin(state.clock * 28) * s * 0.4 : 0);
 
-    // Multi-frame left & right legs + stainless steel blades
     const leftKickX = pFoot.x - s * 0.36 - Math.max(0, stride) * s * 0.34;
     const leftKickY = pFoot.y - Math.max(0, stride) * s * 0.18;
     const rightKickX = pFoot.x + s * 0.36 + Math.max(0, -stride) * s * 0.34;
@@ -2085,7 +2369,6 @@
     ctx.lineTo(rightKickX, rightKickY);
     ctx.stroke();
 
-    // Skate blades
     ctx.strokeStyle = '#f8fafc';
     ctx.lineWidth = Math.max(1.5, s * 0.12);
     ctx.beginPath();
@@ -2095,7 +2378,6 @@
     ctx.lineTo(rightKickX + s * 0.16, rightKickY + 1);
     ctx.stroke();
 
-    // Crisp Hockey Jersey Torso
     const torsoX = pFoot.x + lean;
     const torsoTopY = pFoot.y - s * 1.95;
     const torsoW = s * 1.18;
@@ -2109,11 +2391,9 @@
     ctx.fill();
     ctx.stroke();
 
-    // Shoulder yoke & hem stripe
     ctx.fillStyle = isDefender ? '#991b1b' : jTheme.yoke;
     ctx.fillRect(torsoX - torsoW * 0.48, torsoTopY, torsoW * 0.96, torsoH * 0.24);
 
-    // Jersey Number
     if (s > 4.2) {
       ctx.fillStyle = isDefender ? '#fca5a5' : jTheme.num;
       ctx.font = `900 ${Math.max(8, Math.round(s * 0.52))}px Inter, sans-serif`;
@@ -2122,7 +2402,6 @@
       ctx.fillText(isDefender ? 'D' : skater.number, torsoX, torsoTopY + torsoH * 0.62);
     }
 
-    // Helmet & Tinted Visor
     const headY = torsoTopY - s * 0.34;
     ctx.fillStyle = isDefender ? '#dc2626' : '#0f172a';
     ctx.beginPath();
@@ -2131,12 +2410,10 @@
     ctx.fillStyle = 'rgba(186, 230, 253, 0.78)';
     ctx.fillRect(torsoX - s * 0.24, headY - s * 0.06, s * 0.48, s * 0.14);
 
-    // Hockey Stick & Taped Blade
     ctx.strokeStyle = isCarrier && state.oneTimerArmed ? '#fde047' : '#cbd5e1';
     ctx.lineWidth = Math.max(1.8, s * 0.14);
     ctx.beginPath();
     if (isDefender) {
-      // Extended poke-check stick across the lane!
       const tipX = pFoot.x + skater.stickDir * s * skater.stickReach * 0.72;
       ctx.moveTo(torsoX + skater.stickDir * s * 0.4, torsoTopY + torsoH * 0.5);
       ctx.lineTo(tipX, pFoot.y + s * 0.08);
@@ -2161,7 +2438,6 @@
       ctx.lineTo(stickBladeX + s * 0.35, pFoot.y + s * 0.02 + windupY);
       ctx.stroke();
 
-      // Puck on carrier's blade when not in flight
       if (isCarrier && !state.whipPan.active && !state.shotInFlight) {
         ctx.fillStyle = '#090d16';
         ctx.strokeStyle = state.oneTimerArmed ? '#fde047' : '#38bdf8';
@@ -2173,9 +2449,8 @@
       }
     }
 
-    // Covered Decoy Shadow Defender in Level 5+
     if (!isDefender && skater.isDecoy) {
-      ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.92)';
       ctx.font = `800 ${Math.max(8, Math.round(s * 0.38))}px Inter, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText('COVERED', torsoX, headY - s * 0.56);
@@ -2274,7 +2549,6 @@
   function stepSimulation(dt) {
     state.clock += dt;
 
-    // Ambient snow drift
     for (let i = 0; i < state.ambientFlakes.length; i++) {
       const fl = state.ambientFlakes[i];
       fl.v += fl.fall * dt;
@@ -2284,12 +2558,12 @@
       if (fl.u > 1) fl.u -= 1;
     }
 
-    // Attract-mode gentle glide when on Gate or Hub
     if (state.mode !== 'playing') {
       const carrier = getControlledSkater();
       if (carrier) {
-        carrier.z += 15 * dt;
-        carrier.stridePhase += dt * 7.5;
+        state.currentSpeed = LEVEL_1_BASE_SPEED;
+        carrier.z += LEVEL_1_BASE_SPEED * 0.85 * dt;
+        carrier.stridePhase += dt * 6.5;
         state.focusZ = carrier.z;
         state.camX += (carrier.x * 0.3 - state.camX) * Math.min(1, dt * 4);
         updateTeammateWeavingAndRings(dt);
@@ -2309,25 +2583,23 @@
     const speedFactor = state.stumbleTimer > 0 ? 0.42 : (state.countdown.active ? 0.68 : 1.0);
     state.currentSpeed = state.baseIceSpeed * speedFactor;
 
-    // Advance active carrier forward down the endless multi-rink sheet
     carrier.z += state.currentSpeed * dt;
-    carrier.x += (carrier.targetX - carrier.x) * Math.min(1, dt * (11 + profile.upgrades.speed * 1.4));
+    const lateralLerp = 12 + (profile.upgrades.speed - 1) * 3.4;
+    carrier.x += (carrier.targetX - carrier.x) * Math.min(1, dt * lateralLerp);
     carrier.tilt *= Math.pow(0.08, dt);
-    carrier.stridePhase += dt * (10.5 + state.level * 0.6);
+    carrier.stridePhase += dt * (0.62 * state.currentSpeed);
 
-    if (Math.random() < 0.55) {
+    if (Math.random() < 0.5) {
       recordBladeCarve(carrier, false);
     }
 
-    // Fade older blade carve trails smoothly
     for (let i = state.bladeTrails.length - 1; i >= 0; i--) {
-      state.bladeTrails[i].alpha -= dt * 0.16;
+      state.bladeTrails[i].alpha -= dt * 0.14;
       if (state.bladeTrails[i].alpha <= 0.02) {
         state.bladeTrails.splice(i, 1);
       }
     }
 
-    // Update 3D snow-spray particles
     for (let i = state.snowParticles.length - 1; i >= 0; i--) {
       const sp = state.snowParticles[i];
       sp.x += sp.vx * dt;
@@ -2339,10 +2611,9 @@
       if (sp.life <= 0) state.snowParticles.splice(i, 1);
     }
 
-    // Update weaving teammates & real-time On-Ice Lead Rings
     updateTeammateWeavingAndRings(dt);
 
-    // Camera Whip-Pan Transfer along puck trajectory!
+    // Proportional Camera Whip-Pan Transfer along puck vector
     if (state.whipPan.active) {
       const wp = state.whipPan;
       wp.progress += dt / wp.duration;
@@ -2360,14 +2631,13 @@
         completeWhipPanTransfer();
       }
     } else {
-      // Smooth broadcast camera follow
       const targetCamX = carrier.x * 0.36 + (state.shakeTimer > 0 ? Math.sin(state.clock * 55) * 0.45 : 0);
-      state.camX += (targetCamX - state.camX) * Math.min(1, dt * 8.5);
+      const followRate = 7.5 + (state.baseIceSpeed / LEVEL_1_BASE_SPEED) * 1.5;
+      state.camX += (targetCamX - state.camX) * Math.min(1, dt * followRate);
       state.focusZ = carrier.z;
       state.camRoll *= Math.pow(0.05, dt);
     }
 
-    // Update One-Timer Shot in Flight
     if (state.shotInFlight) {
       const sh = state.shotInFlight;
       sh.progress += dt / sh.duration;
@@ -2378,7 +2648,6 @@
       }
     }
 
-    // Update net ripple & goal lights; respawn oncoming net if armed and passed
     state.nets.forEach((n) => {
       if (n.rippleTimer > 0) n.rippleTimer = Math.max(0, n.rippleTimer - dt);
       if (n.goalLightTimer > 0) n.goalLightTimer = Math.max(0, n.goalLightTimer - dt);
@@ -2401,7 +2670,7 @@
     if (!state.countdown.active && !state.whipPan.active && !state.shotInFlight && state.graceTimer <= 0) {
       for (let i = 0; i < state.defenders.length; i++) {
         const d = state.defenders[i];
-        d.stridePhase += dt * 8;
+        d.stridePhase += dt * 7;
         if (Math.abs(d.z - carrier.z) < 1.35 && Math.abs(d.x - carrier.x) < 1.75) {
           state.defenders.splice(i, 1);
           triggerTurnover('Poke-checked by oncoming defender!');
@@ -2420,9 +2689,8 @@
     const arena = getArenaForLevel(state.level);
     renderIceSheetAndRink(arena);
     renderBladeTrails();
-    renderLeadRingsAndPassPreview();
+    renderLeadRings();
 
-    // Depth-sorted 3D drawables (back-to-front painter's sort by z)
     const drawList = [];
     state.nets.forEach((n) => drawList.push({ z: n.z, draw: () => renderGoalNet(n) }));
     state.obstacles.forEach((o) => drawList.push({ z: o.z, draw: () => renderObstacle(o) }));
@@ -2449,48 +2717,77 @@
   }
 
   /* ==========================================================================
-     CONTROLS: 4 THUMB BUTTONS + KEYBOARD + SWIPE / DIRECT TEAMMATE TAP
+     DIRECT-TOUCH GESTURES (SWIPE ICE TO CUT, TAP TEAMMATE TO PASS, TAP NET TO SHOOT)
+     + FULL DESKTOP MOUSE & KEYBOARD SUPPORT
      ========================================================================== */
-  function bindArcadeControl(btnId, actionFn) {
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-    let lastTouchFire = 0;
+  let activeGesture = null;
 
-    btn.addEventListener('pointerdown', (e) => {
-      if (btn.disabled) return;
-      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-        e.preventDefault();
-        lastTouchFire = performance.now();
-        actionFn();
-      }
-    });
+  canvas.addEventListener('pointerdown', (e) => {
+    if (state.mode !== 'playing') return;
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+      e.preventDefault();
+    }
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
 
-    btn.addEventListener('click', (e) => {
-      if (btn.disabled) return;
-      if (performance.now() - lastTouchFire < 420) {
-        e.preventDefault();
-        return;
-      }
-      actionFn();
-    });
+    activeGesture = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      anchorX: e.clientX,
+      anchorY: e.clientY,
+      maxTravel: 0,
+      didSwipe: false
+    };
+  });
 
-    btn.addEventListener('dblclick', (e) => e.preventDefault());
-    btn.addEventListener('contextmenu', (e) => e.preventDefault());
+  canvas.addEventListener('pointermove', (e) => {
+    if (!activeGesture || e.pointerId !== activeGesture.pointerId || state.mode !== 'playing') return;
+
+    const totalMove = Math.hypot(e.clientX - activeGesture.startX, e.clientY - activeGesture.startY);
+    if (totalMove > activeGesture.maxTravel) {
+      activeGesture.maxTravel = totalMove;
+    }
+
+    const dx = e.clientX - activeGesture.anchorX;
+    if (Math.abs(dx) >= SWIPE_LANE_THRESHOLD_PX) {
+      moveLane(dx > 0 ? 1 : -1);
+      // Reset drag anchor immediately so continuous back-and-forth dekes work without lifting a finger!
+      activeGesture.anchorX = e.clientX;
+      activeGesture.anchorY = e.clientY;
+      activeGesture.didSwipe = true;
+    }
+  });
+
+  function finishPointerGesture(e) {
+    if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
+    const g = activeGesture;
+    activeGesture = null;
+
+    if (state.mode !== 'playing') return;
+
+    const endDx = e.clientX - g.anchorX;
+    const endDy = e.clientY - g.anchorY;
+    const totalTravel = Math.max(g.maxTravel, Math.hypot(e.clientX - g.startX, e.clientY - g.startY));
+
+    // Support instant 2-point flicks that didn't emit intermediate pointermove events
+    if (!g.didSwipe && Math.abs(endDx) >= SWIPE_LANE_THRESHOLD_PX && Math.abs(endDx) > Math.abs(endDy)) {
+      moveLane(endDx > 0 ? 1 : -1);
+      return;
+    }
+
+    // Direct tap (< 20px movement and did not swipe)
+    if (!g.didSwipe && totalTravel < TAP_MAX_TRAVEL_PX) {
+      handleCanvasTap(e.clientX, e.clientY);
+    }
   }
 
-  bindArcadeControl('btn-left', () => moveLane(-1));
-  bindArcadeControl('btn-right', () => moveLane(1));
-  bindArcadeControl('btn-pass', () => triggerPass());
-  bindArcadeControl('btn-shoot', () => triggerShoot());
-
-  const controlsNav = document.getElementById('thumb-controls');
-  if (controlsNav) {
-    controlsNav.addEventListener('dblclick', (e) => e.preventDefault());
-    controlsNav.addEventListener('contextmenu', (e) => e.preventDefault());
-  }
+  canvas.addEventListener('pointerup', finishPointerGesture);
+  canvas.addEventListener('pointercancel', () => { activeGesture = null; });
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  canvas.addEventListener('dblclick', (e) => e.preventDefault());
   document.addEventListener('gesturestart', (e) => e.preventDefault());
 
+  // Full Desktop Keyboard Support (ArrowLeft/Right or A/D, Q/E/W/ArrowUp to Pass, Space/S to Shoot)
   window.addEventListener('keydown', (e) => {
     if (state.mode !== 'playing') return;
     if (e.target && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) return;
@@ -2502,57 +2799,26 @@
     } else if (k === 'arrowright' || k === 'd') {
       e.preventDefault();
       moveLane(1);
+    } else if (k === 'q') {
+      e.preventDefault();
+      const carrier = getControlledSkater();
+      const leftMate = state.skaters
+        .filter((s) => !carrier || s.id !== carrier.id)
+        .sort((a, b) => a.x - b.x)[0];
+      if (leftMate) triggerPass(leftMate);
+    } else if (k === 'e') {
+      e.preventDefault();
+      const carrier = getControlledSkater();
+      const rightMate = state.skaters
+        .filter((s) => !carrier || s.id !== carrier.id)
+        .sort((a, b) => b.x - a.x)[0];
+      if (rightMate) triggerPass(rightMate);
     } else if (k === 'arrowup' || k === 'w' || k === 'p') {
       e.preventDefault();
       triggerPass();
     } else if (k === ' ' || k === 's') {
       e.preventDefault();
       triggerShoot();
-    }
-  });
-
-  // Swipe & Canvas Teammate Tap Support
-  let touchStart = null;
-  canvas.addEventListener('pointerdown', (e) => {
-    if (state.mode !== 'playing') return;
-    touchStart = { x: e.clientX, y: e.clientY };
-  });
-
-  canvas.addEventListener('pointerup', (e) => {
-    if (state.mode !== 'playing' || !touchStart) return;
-    const dx = e.clientX - touchStart.x;
-    const dy = e.clientY - touchStart.y;
-    touchStart = null;
-
-    if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy)) {
-      moveLane(dx < 0 ? -1 : 1);
-      return;
-    }
-    if (dy < -42 && Math.abs(dy) > Math.abs(dx)) {
-      if (state.oneTimerArmed) triggerShoot();
-      else triggerPass();
-      return;
-    }
-
-    // Tap directly near a teammate or their Lead Ring to pass to them!
-    const carrier = getControlledSkater();
-    let tappedMate = null;
-    let bestDist = 54;
-    state.skaters.forEach((s) => {
-      if (!carrier || s.id === carrier.id) return;
-      const pBody = project3D(s.x, 0.9, s.z);
-      const pRing = project3D(s.x, 0.05, s.leadZ || (s.z + 4.8));
-      [pBody, pRing].forEach((pt) => {
-        if (!pt) return;
-        const dist = Math.hypot(e.clientX - pt.x, e.clientY - pt.y);
-        if (dist < bestDist) {
-          bestDist = dist;
-          tappedMate = s;
-        }
-      });
-    });
-    if (tappedMate) {
-      triggerPass(tappedMate.id);
     }
   });
 
@@ -2663,13 +2929,21 @@
   requestAnimationFrame(frame);
 
   window.__SYNAPZ_RUSH__ = {
-    version: '10.9.4',
+    version: '1.2.0',
+    playbookVersion: '10.9.4',
     cameraElevationDeg: CAMERA_ELEVATION_DEG,
+    level1BaseSpeed: LEVEL_1_BASE_SPEED,
+    levelSpeedGrowth: LEVEL_SPEED_GROWTH,
+    calcBaseSpeedForLevel,
     storageKeys: STORAGE_KEYS,
     arenas: ARENAS,
     getState: () => state,
     getProfile: () => profile,
     getSpeechState: () => speechState,
+    getCarrierScreenAnchor,
+    getProjectedTeammateHitboxes,
+    getProjectedNetHitboxes,
+    handleCanvasTap,
     toNaturalTalk,
     speakGuide,
     startShift,

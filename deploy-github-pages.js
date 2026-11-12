@@ -176,7 +176,7 @@ async function main() {
   const commitSha = await git.commit({
     fs,
     dir: ROOT,
-    message: 'feat: Synapz Hockey Rush v10.9.4 standalone phone/tablet release',
+    message: 'feat: Synapz Hockey Rush v1.2 Direct-Touch Vision upgrade',
     author: {
       name: 'Dane Bekkedahl',
       email: 'danebekkedahl@gmail.com'
@@ -225,21 +225,27 @@ async function main() {
     }
   }
 
-  // 8. Poll live URLs until BOTH return HTTP 200
-  console.log(`⏳ Polling live GitHub Pages URLs:\n   - ${LIVE_GAME_URL}\n   - ${LIVE_REPORT_URL}`);
-  const deadline = Date.now() + 210_000;
+  // 8. Poll live URLs until BOTH return HTTP 200 AND v1.2 bundle is live on CDN
+  console.log(`⏳ Polling live GitHub Pages URLs for v1.2 propagation:\n   - ${LIVE_GAME_URL}\n   - ${LIVE_REPORT_URL}`);
+  const deadline = Date.now() + 240_000;
   let attempt = 0;
 
   while (Date.now() < deadline) {
     attempt++;
     try {
-      const [rGame, rReport] = await Promise.all([
-        fetch(`${LIVE_GAME_URL}?v=${Date.now()}`, { cache: 'no-store' }),
-        fetch(`${LIVE_REPORT_URL}?v=${Date.now()}`, { cache: 'no-store' })
+      const cb = Date.now();
+      const [rGame, rApp, rReport] = await Promise.all([
+        fetch(`${LIVE_GAME_URL}?v=${cb}`, { cache: 'no-store' }),
+        fetch(`${LIVE_GAME_URL}app.js?v=1.2&cb=${cb}`, { cache: 'no-store' }),
+        fetch(`${LIVE_REPORT_URL}?v=${cb}`, { cache: 'no-store' })
       ]);
-      console.log(`   [Attempt ${attempt}] Game=${rGame.status} | Report=${rReport.status}`);
-      if (rGame.status === 200 && rReport.status === 200) {
-        console.log('\n🎉 BOTH LIVE GITHUB PAGES URLS VERIFIED HTTP 200!');
+      const gameHtml = rGame.status === 200 ? await rGame.text() : '';
+      const appJs = rApp.status === 200 ? await rApp.text() : '';
+      const isV12Html = gameHtml.includes('app.js?v=1.2');
+      const isV12Js = appJs.includes("version: '1.2.0'");
+      console.log(`   [Attempt ${attempt}] Game=${rGame.status} (v1.2 HTML=${isV12Html}) | AppJS=${rApp.status} (v1.2 JS=${isV12Js}) | Report=${rReport.status}`);
+      if (rGame.status === 200 && rReport.status === 200 && isV12Html && isV12Js) {
+        console.log('\n🎉 LIVE GITHUB PAGES v1.2 BUNDLE & REPORT VERIFIED HTTP 200!');
         console.log(`🏒 Live Game URL:   ${LIVE_GAME_URL}`);
         console.log(`📱 Live Report URL: ${LIVE_REPORT_URL}`);
         return;

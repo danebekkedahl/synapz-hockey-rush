@@ -1,35 +1,38 @@
 # SYNAPZ HOCKEY RUSH — FOUNDER VISION NOTES (v10.9.4 Playbook Architecture)
 
-**Project:** Synapz Hockey Rush (100% Standalone Graphics-First Ice-Vision Endless Runner)  
+**Project:** Synapz Hockey Rush — **v1.2 Direct-Touch Vision Release** (100% Standalone Graphics-First Ice-Vision Endless Runner)  
 **Co-Founders:** Dane Bekkedahl (`danebekkedahl@gmail.com`) & Evan Bekkedahl (`evanbekk@gmail.com`)  
-**Architecture Standard:** v10.9.4 Playbook Architecture  
+**Architecture Standard:** v10.9.4 Playbook Architecture (`styles.css?v=1.2`, `app.js?v=1.2`)  
 **Storage Namespace:** `synapz_rush_*` (`synapz_rush_profile`, `synapz_rush_report_state`, `synapz_rush_taste`, `synapz_rush_live_upgrades`, `synapz_rush_red_flags`)  
-**Local Dev Port:** `http://localhost:8090` (strictly isolated from all sibling apps)
+**Local Dev Port:** `http://localhost:8090` | **Live URL:** `https://danebekkedahl.github.io/synapz-hockey-rush/`
 
 ---
 
-## 1. Core Pillar: Graphics-First 35-Degree Broadcast Ice Vision
+## 1. Core Pillar: Graphics-First 35-Degree Broadcast Ice Vision (v1.2 Buttonless Sheet)
 
-Synapz Hockey Rush puts **high-craft 2.5D/3D depth perspective and full-ice readability** first. Rather than a flat top-down diagram or cramped bumper view, the game renders an **Elevated 35-Degree Broadcast Camera** looking up a continuous, seamless multi-rink ice sheet:
+Synapz Hockey Rush puts **high-craft 2.5D/3D depth perspective, unobstructed bottom-to-top ice sightlines, and direct-touch spatial hockey IQ** first. Rather than cluttering the bottom ice with virtual buttons, v1.2 renders a **100% Buttonless Bottom Ice Sheet** (`0` bottom gameplay buttons) with an **Elevated 35-Degree Broadcast Camera**:
 
-- **Full-Sheet Sightlines:** Players can clearly read all 3 skating lanes (Left Wing, Center Slot, Right Wing), weaving wingers, defender poke-check sticks, arena obstacles, and oncoming nets far up the ice.
+- **Active Skater 25%+ Closer to Bottom Edge:** Shifting the active puck carrier's screen-space Y anchor down to `~73.5%` of viewport height (`~26.5%` from the bottom edge vs `43.4%` in v1.0) opens a massive, unobstructed upper-ice runway to read all 3 lanes, weaving teammates, defender sticks, and oncoming nets far up the sheet.
+- **50% Slower Level 1 Pace + 15% Compounding Level Progression:**
+  - `LEVEL_1_BASE_SPEED = 12.55` (50% slower than v1.0's `~25.1` pace for calm, spacious ice reads).
+  - `levelBaseSpeed = 12.55 * Math.pow(1.15, level - 1)` (`L1 = 12.55`, `L2 = 14.43`, `L3 = 16.60`, `L4 = 19.09`, `L5 = 21.95`), with all obstacle, defender, and oncoming net spawning tied strictly to **ice distance (`z` meters)** rather than wall-clock timers.
 - **Ice Surface Realism:** Specular overhead arena light reflections, rink markings (red center line, blue lines, faceoff circles and dots, crease paint, dasher boards, plexiglass stanchions), persistent skate-blade carve trails etched into the ice, and directional snow-spray particle bursts on sharp lane cuts.
-- **Animated Skaters & Crisp Jerseys:** Multi-frame stride animations (left push, glide recovery, right push, crossover lean, pass follow-through, one-timer windup, stumble recovery) wearing high-contrast **Synapz Hockey Rush** home/away sweaters with numbers, helmets, visors, and taped sticks.
+- **Animated Skaters & Crisp Jerseys:** Multi-frame stride animations wearing high-contrast **Synapz Hockey Rush** sweaters with numbers, helmets, visors, and taped sticks.
 - **Dynamic On-Ice Lead Rings:** Projected ahead of every teammate's skate blades in 3D perspective, shifting color in real time as passing lanes open and close:
   - **Emerald Green (`#10b981`):** Clean, open lead window — high-velocity tape-to-tape completion.
-  - **Amber (`#f59e0b`):** Tight contested window — thread-the-needle bonus if timed cleanly before a defender closes.
+  - **Amber (`#f59e0b`):** Tight contested window — thread-the-needle bonus (`+5 SP`) if timed cleanly.
   - **Crimson (`#ef4444`):** Defender stick or obstacle actively blocking the passing lane — high interception risk.
 
 ---
 
-## 2. Core Gameplay Loop: Quick Thinking, Tape-to-Tape Chains & One-Timers
+## 2. Core Gameplay Loop: Direct-Touch Swipes, Target-Tap Passes & Net-Tap One-Timers
 
-### Strict `<= 4` Thumb-Zone Controls
-Mobile thumb ergonomics enforce **at most 4 gameplay action buttons** on screen during live play:
-1. `[⬅️ Left]` — Cut one lane left with snow-spray burst (Keyboard: `ArrowLeft` / `A`, or swipe left)
-2. `[➡️ Right]` — Cut one lane right with snow-spray burst (Keyboard: `ArrowRight` / `D`, or swipe right)
-3. `[🏒 Pass]` — Zip lead pass toward best/nearest open teammate's On-Ice Lead Ring (Keyboard: `ArrowUp` / `W` / `P`, or tap teammate)
-4. `[🎯 Shoot]` — Unleash a top-corner One-Timer once armed (Keyboard: `Space` / `S`)
+### 100% Buttonless Direct-Touch Controls (`0 <= 4` Buttons Rule Strictly Satisfied)
+1. **Swipe Left / Swipe Right Anywhere on Ice (`>= 26px`):** Zero-latency horizontal drag/flick immediately cuts the active skater left or right one lane with snow-spray carve particles, resetting the drag anchor on every lane shift so continuous back-and-forth dekes work without lifting a finger.
+2. **Tap Directly on Any Teammate or Lead Ring (`+42px` Touch Forgiveness):** Fires the puck specifically to **that tapped skater**, requiring the player to scan the sheet and choose the open Emerald/Amber option over a Crimson stick-blocked lane. Tapping directly inside an Emerald Lead Ring awards a crisp `"TAPE TO TAPE!"` callout (`+5 SP` bonus on weaving levels).
+3. **Tap Directly on Oncoming Net at `3/3` Passes (`+38px` Touch Forgiveness):** Once `PASSES: 3/3` triggers `"ONE-TIMER ARMED!"`, oncoming nets pulse glowing target corners with a `"🎯 TAP NET!"` cue. Tapping the net launches a blistering one-timer aimed toward the **tapped corner/side** of the cage. Tapping a net before `3/3` passes pulses `PASSES: X/3` with a `"3 PASSES TO UNLOCK SHOT"` visual nudge.
+4. **Full Desktop Mouse + Keyboard Parity:** Mouse drag/click on `#ice-canvas`, `ArrowLeft`/`ArrowRight` or `A`/`D` to move, `Q`/`E`/`W`/`ArrowUp` to pass, and `Space`/`S` to shoot.
+5. **Level 1 Auto-Fading 3-Second Micro-Hint:** Displays `SWIPE ICE TO MOVE • TAP TEAMMATE TO PASS • TAP NET AT 3/3` cleanly at shift start on Level 1 with zero bracket leaks.
 
 ### Pass & Camera Whip-Pan Transfer
 - Tapping `[🏒 Pass]` fires a crisp puck along the ice toward the targeted teammate's **On-Ice Lead Ring**.
